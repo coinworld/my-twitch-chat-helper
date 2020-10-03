@@ -11,6 +11,7 @@ import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.Match;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApiException;
+import tv.twitch.hwsnemo.autoreply.osu.UpdatingMatch;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
@@ -38,7 +39,8 @@ public class MatchCmd implements Cmd {
 				@Override
 				public void run() {
 					try {
-						Match m = new Match(mp);
+						// Match m = new Match(mp);
+						UpdatingMatch m = new UpdatingMatch(mp);
 						Chat.send("Now I track the match automatically.");
 						while (ongoing) {
 							List<Result> res = m.getNow();
@@ -218,6 +220,13 @@ public class MatchCmd implements Cmd {
 			if (mp >= 0) {
 				Chat.send("https://osu.ppy.sh/mp/" + mp);
 			}
+		} else if (CmdHistory.checkAndPut(sp[0], event, "!reset", CmdLevel.MOD)) {
+			if (!ongoing)
+				return true;
+
+			ourscore = 0;
+			oppscore = 0;
+			Chat.send(getScore());
 		} else {
 			return false;
 		}

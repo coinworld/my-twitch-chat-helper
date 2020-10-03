@@ -10,7 +10,7 @@ public class CmdHistory {
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
 	public static boolean checkAndPut(String input, MessageEvent event, String cmd, CmdLevel lvl) {
-		if (cmd.equalsIgnoreCase(input) && (!isUsedRecently(cmd) || lvl.getLevel() > 1) && lvl.check(event)) {
+		if (cmd.equalsIgnoreCase(input) && (!isUsedRecently(cmd) || lvl.getLevel() > 2) && lvl.check(event)) {
 			lastcmd.put(cmd, System.currentTimeMillis());
 			return true;
 		}

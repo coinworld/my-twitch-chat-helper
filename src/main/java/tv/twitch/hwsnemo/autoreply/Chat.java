@@ -83,7 +83,7 @@ public class Chat {
 			sugg.add(new PredictAnswer());
 			sugg.add(new LinkDetector());
 			sugg.add(new LanguageDetect());
-
+			
 			while (true) {
 				String c = "";
 				try {
@@ -113,6 +113,7 @@ public class Chat {
 			String msg = event.getMessage();
 
 			if (msg.startsWith("!")) {
+				Main.write(event.getUser().getLogin() + "> " + msg);
 				String[] sp = msg.split(" ", 2);
 				for (Cmd cmd : cmds) {
 					if (cmd.go(sp, event)) {
@@ -127,7 +128,7 @@ public class Chat {
 						Main.writeWarn(event.getUser().getLogin() + ": " + msg + " | " + sa.reason());
 						break;
 					}
-				}
+				} // there is a possibility that message can be displayed later than the prior message because pircbotx is async
 				if (act == null) {
 					Main.write(event.getUser().getLogin() + ": " + msg);
 				}

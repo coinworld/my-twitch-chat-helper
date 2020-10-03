@@ -14,15 +14,45 @@ import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
-public class Match {
+public class UpdatingMatch {
+	private Map<MatchTypes.Game, List<MatchTypes.Score>> games = new HashMap<>();
+	private final int mp;
+
+	private final Map<String, String> parm;
+
+	private int lastgame = 0;
+
+	private final String FEAT = "get_match";
+
+	public UpdatingMatch(int mp) throws Exception {
+		this.mp = mp;
+		Map<String, String> p = new HashMap<>();
+		p.put("mp", mp + "");
+		this.parm = Collections.unmodifiableMap(p);
+
+		update();
+		for (MatchTypes.Game game : games.keySet()) {
+			if (game.getGame_id() > lastgame) {
+				lastgame = game.getGame_id();
+			}
+		}
+	}
+
+	public int getMP() {
+		return mp;
+	}
+
 	private static boolean eqck(String name, String check) {
 		return name != null ? name.equals(check) : false;
 	}
 
-	private static Map<MatchTypes.Game, List<MatchTypes.Score>> parse(String json) throws Exception {
-		Map<MatchTypes.Game, List<MatchTypes.Score>> games = new HashMap<>();
+	public List<Result> getNow() throws Exception {
+		update();
+		return getResultFrom();
+	}
 
-		JsonParser jp = new JsonFactory().createParser(json);
+	private void update() throws Exception {
+		JsonParser jp = new JsonFactory().createParser(OsuApi.request(FEAT, parm));
 		JsonToken tk = jp.nextValue();
 
 		while (tk != null) {
@@ -48,7 +78,10 @@ public class Match {
 							if (tk == JsonToken.START_OBJECT) {
 								throw new OsuApiException("Data can't be parsed.");
 							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "game_id")) {
-								game_id = Integer.parseInt(jp.getText());
+								int temp_game_id = Integer.parseInt(jp.getText());
+								if (temp_game_id > lastgame) {
+									game_id = temp_game_id;
+								}
 							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
 								end = true;
 							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team_type")) {
@@ -89,44 +122,13 @@ public class Match {
 					}
 					tk = jp.nextValue();
 				}
+
 			}
 			tk = jp.nextValue();
 		}
-
-		return games;
 	}
 
-	private final int mp;
-
-	private final Map<String, String> parm;
-
-	private int lastgame = 0;
-
-	private final String FEAT = "get_match";
-
-	public Match(int mp) throws Exception {
-		this.mp = mp;
-		Map<String, String> p = new HashMap<>();
-		p.put("mp", mp + "");
-		this.parm = Collections.unmodifiableMap(p);
-
-		Map<MatchTypes.Game, List<MatchTypes.Score>> games = parse(OsuApi.request(FEAT, parm));
-		for (MatchTypes.Game game : games.keySet()) {
-			if (game.getGame_id() > lastgame) {
-				lastgame = game.getGame_id();
-			}
-		}
-	}
-
-	public int getMP() {
-		return mp;
-	}
-
-	public List<Result> getNow() throws Exception {
-		return getResultFrom(parse(OsuApi.request(FEAT, parm)));
-	}
-
-	private List<Result> getResultFrom(Map<MatchTypes.Game, List<MatchTypes.Score>> games) {
+	private List<Result> getResultFrom() {
 		List<Result> res = new ArrayList<>();
 		int lastid = lastgame;
 		for (MatchTypes.Game game : games.keySet()) {
