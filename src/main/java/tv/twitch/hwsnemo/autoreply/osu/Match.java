@@ -163,7 +163,8 @@ public class Match {
 		int lastid = lastgame;
 		for (Game game : games.keySet()) {
 			if (game.game_id > lastgame) {
-				lastid = game.game_id;
+				if (game.game_id > lastid)
+					lastid = game.game_id;
 				if (game.team_type == 0) { // head to head
 					int bestid = -1;
 					int bestscore = -1;
