@@ -152,7 +152,7 @@ public class Match {
 		List<Result> res = new ArrayList<>();
 		int lastid = lastgame;
 		for (Game game : games.keySet()) {
-			if (game.game_id > lastid) {
+			if (game.game_id > lastgame) {
 				lastid = game.game_id;
 				if (game.team_type == 0) { // head to head
 					int bestid = -1;
