@@ -150,9 +150,10 @@ public class Match {
 
 	private List<Result> getResultFrom(Map<Game, List<Score>> games) {
 		List<Result> res = new ArrayList<>();
+		int lastid = lastgame;
 		for (Game game : games.keySet()) {
-			if (game.game_id > lastgame) {
-				lastgame = game.game_id;
+			if (game.game_id > lastid) {
+				lastid = game.game_id;
 				if (game.team_type == 0) { // head to head
 					int bestid = -1;
 					int bestscore = -1;
@@ -193,6 +194,7 @@ public class Match {
 				}
 			}
 		}
+		lastgame = lastid;
 		return res;
 	}
 }
