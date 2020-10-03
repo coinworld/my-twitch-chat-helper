@@ -23,6 +23,16 @@ public class Match {
 			this.game_id = game_id;
 			this.team_type = team_type;
 		}
+		
+		@Override
+		public int hashCode() {
+			return game_id;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			return (o instanceof Game) ? ((Game) o).game_id == this.game_id : false;
+		}
 	}
 
 	private static class Score {
