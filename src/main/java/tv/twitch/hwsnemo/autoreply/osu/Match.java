@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -14,15 +13,14 @@ import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
+@Deprecated
 public class Match {
 	private static boolean eqck(String name, String check) {
 		return name != null ? name.equals(check) : false;
 	}
 
-	private static Map<MatchTypes.Game, List<MatchTypes.Score>> parse(String json) throws Exception {
+	private static Map<MatchTypes.Game, List<MatchTypes.Score>> parse(JsonParser jp) throws Exception {
 		Map<MatchTypes.Game, List<MatchTypes.Score>> games = new HashMap<>();
-
-		JsonParser jp = new JsonFactory().createParser(json);
 		JsonToken tk = jp.nextValue();
 
 		while (tk != null) {

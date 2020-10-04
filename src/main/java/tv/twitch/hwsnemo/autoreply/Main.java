@@ -13,7 +13,7 @@ import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 
 public class Main {
 
-	public static final boolean RUN = true;
+	public static final boolean RUN = false;
 
 	private static LineReader reader;
 	private static Terminal term;
@@ -36,7 +36,7 @@ public class Main {
 			String osuapi = null;
 			String defch = null;
 			String twitchname = null;
-			
+
 			Map<String, String> map = ConfigFile.get("config.txt");
 			for (String key : map.keySet()) {
 				if (key.equals("oauth")) {
@@ -58,7 +58,7 @@ public class Main {
 			write("Loaded the config successfully");
 
 			OsuApi.set(osuapi);
-			
+
 			out = System.out;
 			err = System.err;
 			PrintStream ps = new PrintStream(OutputStream.nullOutputStream());
@@ -68,7 +68,6 @@ public class Main {
 			Chat.create(twitchname, oauth, defch);
 			Chat.getBot().startBot();
 		} else {
-
 		}
 
 	}
@@ -96,6 +95,7 @@ public class Main {
 		reader.callWidget(LineReader.REDISPLAY);
 		term.writer().flush();
 	}
+
 	public static void writeWarn(String m) {
 		write("\033[93;1m" + m + "\033[0m");
 	}

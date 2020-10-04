@@ -25,37 +25,6 @@ import tv.twitch.hwsnemo.autoreply.suggest.impl.PredictAnswer;
 
 public class Chat {
 
-	private static final String SERVER = "irc.chat.twitch.tv";
-	private static final int PORT = 6697;
-	private static String name = null;
-	private static String defch = null;
-	private static PircBotX bot = null;
-
-	protected static void create(String name, String auth, String defch) throws Exception {
-		Chat.name = name;
-		Chat.defch = defch;
-		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
-				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)
-				.addAutoJoinChannel(defch).addListener(new Listener()).buildConfiguration());
-	}
-
-	public static String getDefCh() {
-		return defch;
-	}
-
-	public static PircBotX getBot() {
-		return bot;
-	}
-
-	public static String getName() {
-		return name;
-	}
-
-	public static void send(String msg) {
-		getBot().sendIRC().message(getDefCh(), ((msg.startsWith("/") || msg.startsWith("!")) ? "" : "[BOT] ") + msg);
-		Main.write("<SEND> " + msg);
-	}
-
 	private static class Listener extends ListenerAdapter {
 		private final List<Cmd> cmds = new ArrayList<>();
 
@@ -134,5 +103,36 @@ public class Chat {
 				}
 			}
 		}
+	}
+	private static final String SERVER = "irc.chat.twitch.tv";
+	private static final int PORT = 6697;
+	private static String name = null;
+	private static String defch = null;
+
+	private static PircBotX bot = null;
+
+	protected static void create(String name, String auth, String defch) throws Exception {
+		Chat.name = name;
+		Chat.defch = defch;
+		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
+				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)
+				.addAutoJoinChannel(defch).addListener(new Listener()).buildConfiguration());
+	}
+
+	public static PircBotX getBot() {
+		return bot;
+	}
+
+	public static String getDefCh() {
+		return defch;
+	}
+
+	public static String getName() {
+		return name;
+	}
+
+	public static void send(String msg) {
+		getBot().sendIRC().message(getDefCh(), ((msg.startsWith("/") || msg.startsWith("!")) ? "" : "[BOT] ") + msg);
+		Main.write("<SEND> " + msg);
 	}
 }

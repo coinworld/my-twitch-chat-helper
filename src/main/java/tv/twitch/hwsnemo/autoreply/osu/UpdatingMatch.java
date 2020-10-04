@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -15,14 +14,20 @@ import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class UpdatingMatch {
+	private static boolean eqck(String name, String check) {
+		return name != null ? name.equals(check) : false;
+	}
 	private Map<MatchTypes.Game, List<MatchTypes.Score>> games = new HashMap<>();
-	private final int mp;
 
-	private final Map<String, String> parm;
+	private int mp;
+
+	private Map<String, String> parm;
 
 	private int lastgame = 0;
 
 	private final String FEAT = "get_match";
+
+	private boolean over = false;
 
 	public UpdatingMatch(int mp) throws Exception {
 		this.mp = mp;
@@ -30,7 +35,7 @@ public class UpdatingMatch {
 		p.put("mp", mp + "");
 		this.parm = Collections.unmodifiableMap(p);
 
-		update();
+		update(OsuApi.request(FEAT, parm));
 		for (MatchTypes.Game game : games.keySet()) {
 			if (game.getGame_id() > lastgame) {
 				lastgame = game.getGame_id();
@@ -41,91 +46,10 @@ public class UpdatingMatch {
 	public int getMP() {
 		return mp;
 	}
-
-	private static boolean eqck(String name, String check) {
-		return name != null ? name.equals(check) : false;
-	}
-
+	
 	public List<Result> getNow() throws Exception {
-		update();
+		update(OsuApi.request(FEAT, parm));
 		return getResultFrom();
-	}
-
-	private void update() throws Exception {
-		JsonParser jp = new JsonFactory().createParser(OsuApi.request(FEAT, parm));
-		JsonToken tk = jp.nextValue();
-
-		while (tk != null) {
-			if (tk == JsonToken.START_OBJECT && eqck(jp.currentName(), "match")) {
-				tk = jp.nextValue();
-				while (tk != JsonToken.END_OBJECT && !eqck(jp.currentName(), "match")) {
-					if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
-						throw new OsuApiException("Match is not active now.");
-					}
-					tk = jp.nextValue();
-				}
-			} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "games")) {
-				tk = jp.nextValue();
-				while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "games")) {
-					if (tk == JsonToken.START_OBJECT) {
-						int game_id = -1;
-						int team_type = -1;
-						boolean end = false;
-						List<MatchTypes.Score> scores = new ArrayList<>();
-
-						tk = jp.nextValue();
-						while (tk != JsonToken.END_OBJECT) {
-							if (tk == JsonToken.START_OBJECT) {
-								throw new OsuApiException("Data can't be parsed.");
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "game_id")) {
-								int temp_game_id = Integer.parseInt(jp.getText());
-								if (temp_game_id > lastgame) {
-									game_id = temp_game_id;
-								}
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
-								end = true;
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team_type")) {
-								team_type = Integer.parseInt(jp.getText());
-							} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "scores")) {
-								tk = jp.nextValue();
-								while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "scores")) {
-									if (tk == JsonToken.START_OBJECT) {
-										int team = -1;
-										int score = -1;
-										int user_id = -1;
-										tk = jp.nextValue();
-										while (tk != JsonToken.END_OBJECT) {
-											if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team")) {
-												team = Integer.parseInt(jp.getText());
-											} else if (tk == JsonToken.VALUE_STRING
-													&& eqck(jp.currentName(), "score")) {
-												score = Integer.parseInt(jp.getText());
-											} else if (tk == JsonToken.VALUE_STRING
-													&& eqck(jp.currentName(), "user_id")) {
-												user_id = Integer.parseInt(jp.getText());
-											} else if (tk == JsonToken.START_OBJECT) {
-												throw new OsuApiException("Data can't be parsed.");
-											}
-											tk = jp.nextValue();
-										}
-										if (team >= 0 && score >= 0 && user_id >= 0)
-											scores.add(new MatchTypes.Score(team, score, user_id));
-									}
-									tk = jp.nextValue();
-								}
-							}
-							tk = jp.nextValue();
-						}
-						if (end && game_id >= 0 && team_type >= 0 && !scores.isEmpty()) {
-							games.put(new MatchTypes.Game(game_id, team_type), scores);
-						}
-					}
-					tk = jp.nextValue();
-				}
-
-			}
-			tk = jp.nextValue();
-		}
 	}
 
 	private List<Result> getResultFrom() {
@@ -177,5 +101,81 @@ public class UpdatingMatch {
 		}
 		lastgame = lastid;
 		return res;
+	}
+
+	private void update(JsonParser jp) throws Exception {
+		JsonToken tk = jp.nextValue();
+		
+		if (over) // the reason for 'over' is to check remaining games and throw an exception 	after giving the last scores.
+			throw new OsuApiException("This match is not active now.");
+
+		while (tk != null) {
+			if (tk == JsonToken.START_OBJECT && eqck(jp.currentName(), "match")) {
+				tk = jp.nextValue();
+				while (tk != JsonToken.END_OBJECT && !eqck(jp.currentName(), "match")) {
+					if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
+						over = true;
+					}
+					tk = jp.nextValue();
+				}
+			} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "games")) {
+				tk = jp.nextValue();
+				while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "games")) {
+					if (tk == JsonToken.START_OBJECT) {
+						int game_id = -1;
+						int team_type = -1;
+						boolean end = false;
+						List<MatchTypes.Score> scores = new ArrayList<>();
+
+						tk = jp.nextValue();
+						while (tk != JsonToken.END_OBJECT) {
+							if (tk == JsonToken.START_OBJECT) {
+								throw new OsuApiException("Data can't be parsed.");
+							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "game_id")) {
+								game_id = Integer.parseInt(jp.getText());
+							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
+								end = true;
+							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team_type")) {
+								team_type = Integer.parseInt(jp.getText());
+							} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "scores")) {
+								tk = jp.nextValue();
+								while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "scores")) {
+									if (tk == JsonToken.START_OBJECT) {
+										int team = -1;
+										int score = -1;
+										int user_id = -1;
+										tk = jp.nextValue();
+										while (tk != JsonToken.END_OBJECT) {
+											if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team")) {
+												team = Integer.parseInt(jp.getText());
+											} else if (tk == JsonToken.VALUE_STRING
+													&& eqck(jp.currentName(), "score")) {
+												score = Integer.parseInt(jp.getText());
+											} else if (tk == JsonToken.VALUE_STRING
+													&& eqck(jp.currentName(), "user_id")) {
+												user_id = Integer.parseInt(jp.getText());
+											} else if (tk == JsonToken.START_OBJECT) {
+												throw new OsuApiException("Data can't be parsed.");
+											}
+											tk = jp.nextValue();
+										}
+										if (team >= 0 && score >= 0 && user_id >= 0)
+											scores.add(new MatchTypes.Score(team, score, user_id));
+									}
+									tk = jp.nextValue();
+								}
+							}
+							tk = jp.nextValue();
+						}
+						if (end && game_id > lastgame && game_id >= 0 && team_type >= 0 && !scores.isEmpty()) {
+							games.put(new MatchTypes.Game(game_id, team_type), scores);
+						}
+					}
+					tk = jp.nextValue();
+				}
+
+			}
+			tk = jp.nextValue();
+		}
 	}
 }

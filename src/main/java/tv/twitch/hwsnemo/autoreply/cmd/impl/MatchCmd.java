@@ -8,7 +8,6 @@ import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdHistory;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.osu.Match;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApiException;
 import tv.twitch.hwsnemo.autoreply.osu.UpdatingMatch;
@@ -39,7 +38,6 @@ public class MatchCmd implements Cmd {
 				@Override
 				public void run() {
 					try {
-						// Match m = new Match(mp);
 						UpdatingMatch m = new UpdatingMatch(mp);
 						Chat.send("Now I track the match automatically.");
 						while (ongoing) {
