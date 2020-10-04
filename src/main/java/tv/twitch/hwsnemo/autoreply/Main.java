@@ -13,7 +13,7 @@ import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 
 public class Main {
 
-	public static final boolean RUN = false;
+	public static final boolean RUN = true;
 
 	private static LineReader reader;
 	private static Terminal term;
