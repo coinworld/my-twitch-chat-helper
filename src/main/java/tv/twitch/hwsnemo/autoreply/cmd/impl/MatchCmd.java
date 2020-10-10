@@ -78,15 +78,34 @@ public class MatchCmd implements Cmd {
 
 	private volatile int ourscore;
 
+	private int oursetscore;
+
 	private String oppname;
 
 	private volatile int oppscore;
+
+	private int oppsetscore;
 
 	private String desc;
 
 	private volatile boolean ongoing;
 
+	private void reset() {
+		ourname = "Our team";
+		ourscore = 0;
+		oursetscore = 0;
+		oppname = "Opponent";
+		oppscore = 0;
+		oppsetscore = 0;
+		desc = "Nothing here";
+		ongoing = false;
+		mp = -1;
+	}
+
 	private String getScore() {
+		if (oursetscore > 0 || oppsetscore > 0) {
+			return ourname + " (" + oursetscore + ") | " + ourscore + " - " + oppscore + " | (" + oppsetscore + ") " + oppname;
+		}
 		return ourname + " | " + ourscore + " - " + oppscore + " | " + oppname;
 	}
 
@@ -181,8 +200,18 @@ public class MatchCmd implements Cmd {
 				return true;
 
 			int n = 1;
-			if (sp.length != 1)
-				n = Integer.parseInt(sp[1]);
+			if (sp.length != 1) {
+				String sc = sp[1].toLowerCase();
+				if (sc.startsWith("set:")) {
+					n = Integer.parseInt(sc.substring(4));
+					oursetscore += n;
+					ourscore = 0;
+					oppscore = 0;
+					n = 0;
+				} else {
+					n = Integer.parseInt(sc);
+				}
+			}
 			wewon(n);
 			Chat.send("PogChamp " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!lose", CmdLevel.MOD)) {
@@ -190,8 +219,18 @@ public class MatchCmd implements Cmd {
 				return true;
 
 			int n = 1;
-			if (sp.length != 1)
-				n = Integer.parseInt(sp[1]);
+			if (sp.length != 1) {
+				String sc = sp[1].toLowerCase();
+				if (sc.startsWith("set:")) {
+					n = Integer.parseInt(sc.substring(4));
+					oppsetscore += n;
+					ourscore = 0;
+					oppscore = 0;
+					n = 0;
+				} else {
+					n = Integer.parseInt(sc);
+				}
+			}
 			welost(n);
 			Chat.send("Sadge " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!over", CmdLevel.MOD)) {
@@ -221,7 +260,12 @@ public class MatchCmd implements Cmd {
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!reset", CmdLevel.MOD)) {
 			if (!ongoing)
 				return true;
-
+			
+			if (sp.length != 1 && sp[1].equalsIgnoreCase("all")) {
+				oursetscore = 0;
+				oppsetscore = 0;
+			}
+			
 			ourscore = 0;
 			oppscore = 0;
 			Chat.send(getScore());
@@ -230,16 +274,6 @@ public class MatchCmd implements Cmd {
 		}
 
 		return true;
-	}
-
-	private void reset() {
-		ourname = "Our team";
-		ourscore = 0;
-		oppname = "Opponent";
-		oppscore = 0;
-		desc = "Nothing here";
-		ongoing = false;
-		mp = -1;
 	}
 
 	private void undo() {
@@ -254,11 +288,15 @@ public class MatchCmd implements Cmd {
 	}
 
 	private void welost(int score) {
+		if (score <= 0)
+			return;
 		oppscore += score;
 		act = new Act(false, score);
 	}
 
 	private void wewon(int score) {
+		if (score <= 0)
+			return;
 		ourscore += score;
 		act = new Act(true, score);
 	}

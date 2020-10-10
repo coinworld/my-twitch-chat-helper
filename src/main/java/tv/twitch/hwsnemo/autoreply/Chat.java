@@ -19,9 +19,6 @@ import tv.twitch.hwsnemo.autoreply.cmd.impl.MiscCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.TimeCmd;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
-import tv.twitch.hwsnemo.autoreply.suggest.impl.LanguageDetect;
-import tv.twitch.hwsnemo.autoreply.suggest.impl.LinkDetector;
-import tv.twitch.hwsnemo.autoreply.suggest.impl.PredictAnswer;
 
 public class Chat {
 
@@ -49,9 +46,9 @@ public class Chat {
 			cmds.add(new MiscCmd());
 			cmds.add(new TimeCmd());
 
-			sugg.add(new PredictAnswer());
-			sugg.add(new LinkDetector());
-			sugg.add(new LanguageDetect());
+			// sugg.add(new PredictAnswer());
+			// sugg.add(new LinkDetector());
+			// sugg.add(new LanguageDetect());
 			
 			while (true) {
 				String c = "";
