@@ -149,14 +149,14 @@ public class MatchCmd implements Cmd {
 							new AutoThread<TeamVS>(team -> {
 								if (team.blueWon()) {
 									if (isblue)
-										wewon(1);
+										win();
 									else
-										welost(1);
+										lose();
 								} else {
 									if (isblue)
-										welost(1);
+										lose();
 									else
-										wewon(1);
+										win();
 								}
 							}, TeamVS.class).start();
 						} else {
@@ -179,9 +179,9 @@ public class MatchCmd implements Cmd {
 							
 							new AutoThread<H2H>(h2h -> {
 								if (h2h.getWinner() == ourid) {
-									wewon(1);
+									win();
 								} else if (h2h.getWinner() == oppid) {
-									welost(1);
+									lose();
 								}
 							}, H2H.class).start();
 						}
@@ -218,7 +218,9 @@ public class MatchCmd implements Cmd {
 					n = 0;
 				} else {
 					n = Integer.parseInt(sc);
-					wewon(n);
+					for (int i = 0; i < n; i++) {
+						win();
+					}
 				}
 			}
 			Chat.send("PogChamp " + getScore());
@@ -237,7 +239,9 @@ public class MatchCmd implements Cmd {
 					n = 0;
 				} else {
 					n = Integer.parseInt(sc);
-					welost(n);
+					for (int i = 0; i < n; i++) {
+						lose();
+					}
 				}
 			}
 			Chat.send("Sadge " + getScore());
@@ -278,42 +282,21 @@ public class MatchCmd implements Cmd {
 		return true;
 	}
 
-	private void welost(int score) {
-		if (score <= 0)
-			return;
-		oppscore += score;
-		int setscore = getSetScore(oppscore);
-		if (setscore > 0) {
+	private void lose() {
+		oppscore++;
+		if (set > 0 && oppscore >= set) {
 			oppscore = 0;
 			ourscore = 0;
-			oppsetscore += setscore;
+			oppsetscore++;
 		}
-	}
-	
-	private int getSetScore(int score) {
-		int add = 0;
-		if (set > 0 && score >= set) {
-			while (true) {
-				score -= set;
-				if (score >= 0) {
-					add++;
-				} else {
-					break;
-				}
-			}
-		}
-		return add;
 	}
 
-	private void wewon(int score) {
-		if (score <= 0)
-			return;
-		ourscore += score;
-		int setscore = getSetScore(ourscore);
-		if (setscore > 0) {
+	private void win() {
+		ourscore++;
+		if (set > 0 && ourscore >= set) {
 			oppscore = 0;
 			ourscore = 0;
-			oursetscore += setscore;
+			oursetscore++;
 		}
 	}
 
