@@ -106,7 +106,7 @@ public class MatchCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (CmdHistory.checkAndPut(sp[0], event, "!start", CmdLevel.MOD)) {
+		if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!start")) {
 			if (!ongoing) {
 				if (sp.length != 1) {
 					String[] args = sp[1].split(" ");
@@ -195,15 +195,15 @@ public class MatchCmd implements Cmd {
 			} else {
 				Chat.send("Match is not over yet.");
 			}
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!setinfo", CmdLevel.MOD)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!setinfo")) {
 			desc = sp[1];
 			Chat.send("Info is now set.");
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!score", CmdLevel.NORMAL)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!score")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send(getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!win", CmdLevel.MOD)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
 
@@ -222,7 +222,7 @@ public class MatchCmd implements Cmd {
 				}
 			}
 			Chat.send("PogChamp " + getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!lose", CmdLevel.MOD)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
 
@@ -241,25 +241,25 @@ public class MatchCmd implements Cmd {
 				}
 			}
 			Chat.send("Sadge " + getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!over", CmdLevel.MOD)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!over")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send("Match is over / " + getScore());
 			reset();
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!info", CmdLevel.NORMAL)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!info")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send(event.getUser().getNick() + " -> " + desc);
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!mp", CmdLevel.NORMAL)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
 
 			if (mp >= 0) {
 				Chat.send("https://osu.ppy.sh/mp/" + mp);
 			}
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!reset", CmdLevel.MOD)) {
+		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!reset")) {
 			if (!ongoing)
 				return true;
 

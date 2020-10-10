@@ -9,10 +9,15 @@ public class CmdHistory {
 
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
-	public static boolean checkAndPut(String input, MessageEvent event, String cmd, CmdLevel lvl) {
-		if (cmd.equalsIgnoreCase(input) && (!isUsedRecently(cmd) || lvl.getLevel() > 2) && lvl.check(event)) {
-			lastcmd.put(cmd, System.currentTimeMillis());
-			return true;
+	public static boolean checkAndPut(String input, MessageEvent event, CmdLevel lvl, String... cmd) {
+		for (String c : cmd) {
+			if (c.equalsIgnoreCase(input)) {
+				if ((!isUsedRecently(cmd[0]) || lvl.getLevel() > 2) && lvl.check(event)) {
+					lastcmd.put(cmd[0], System.currentTimeMillis());
+					return true;
+				}
+				break;
+			}
 		}
 		return false;
 	}

@@ -13,7 +13,7 @@ public class MiscCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (CmdHistory.checkAndPut(sp[0], event, "!roll", CmdLevel.VIP)) {
+		if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.VIP, "!roll")) {
 			int num = 100;
 			if (sp.length != 1) {
 				num = Integer.parseInt(sp[1]);
