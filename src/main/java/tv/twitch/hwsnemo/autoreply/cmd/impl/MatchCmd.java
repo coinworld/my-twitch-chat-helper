@@ -215,13 +215,13 @@ public class MatchCmd implements Cmd {
 					oursetscore += n;
 					ourscore = 0;
 					oppscore = 0;
-					n = 0;
+					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
-					for (int i = 0; i < n; i++) {
-						win();
-					}
 				}
+			}
+			for (int i = 0; i < n; i++) {
+				win();
 			}
 			Chat.send("PogChamp " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!lose")) {
@@ -236,13 +236,13 @@ public class MatchCmd implements Cmd {
 					oppsetscore += n;
 					ourscore = 0;
 					oppscore = 0;
-					n = 0;
+					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
-					for (int i = 0; i < n; i++) {
-						lose();
-					}
 				}
+			}
+			for (int i = 0; i < n; i++) {
+				lose();
 			}
 			Chat.send("Sadge " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!over")) {

@@ -5,35 +5,16 @@
 	<groupId>tv.twitch.hwsnemo</groupId>
 	<artifactId>AutoReply</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<properties>
-	    <maven.compiler.target>1.8</maven.compiler.target>
-	    <maven.compiler.source>1.8</maven.compiler.source>
-	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>
-										tv.twitch.hwsnemo.autoreply.Main
-									</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-					</execution>
-				</executions>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<release>11</release>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
