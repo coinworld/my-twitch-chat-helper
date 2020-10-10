@@ -17,16 +17,6 @@ import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class MatchCmd implements Cmd {
 
-	private class Act {
-		private final boolean ourteam;
-		private final int score;
-
-		private Act(boolean ourteam, int score) {
-			this.ourteam = ourteam;
-			this.score = score;
-		}
-	}
-
 	private interface AutoRun<T extends Result> {
 		void go(T result);
 	}
@@ -68,8 +58,6 @@ public class MatchCmd implements Cmd {
 
 	private int mp;
 
-	private volatile Act act = null;
-
 	{
 		reset();
 	}
@@ -89,6 +77,10 @@ public class MatchCmd implements Cmd {
 	private String desc;
 
 	private volatile boolean ongoing;
+	
+	private int set;
+	
+	private boolean isblue;
 
 	private void reset() {
 		ourname = "Our team";
@@ -100,11 +92,13 @@ public class MatchCmd implements Cmd {
 		desc = "Nothing here";
 		ongoing = false;
 		mp = -1;
+		set = -1;
 	}
 
 	private String getScore() {
 		if (oursetscore > 0 || oppsetscore > 0) {
-			return ourname + " (" + oursetscore + ") | " + ourscore + " - " + oppscore + " | (" + oppsetscore + ") " + oppname;
+			return ourname + " (" + oursetscore + ") | " + ourscore + " - " + oppscore + " | (" + oppsetscore + ") "
+					+ oppname;
 		}
 		return ourname + " | " + ourscore + " - " + oppscore + " | " + oppname;
 	}
@@ -113,74 +107,87 @@ public class MatchCmd implements Cmd {
 	public boolean go(String[] sp, MessageEvent event) {
 		if (CmdHistory.checkAndPut(sp[0], event, "!start", CmdLevel.MOD)) {
 			if (!ongoing) {
-				boolean auto = false;
 				if (sp.length != 1) {
-					String[] args = sp[1].split(" ", 2);
-					int mp = Integer.parseInt(args[0]);
-					if (args[1].contains(",")) { // 1v1
-						String[] players = args[1].split(",", 2);
-						String our = players[0];
-						String opp = players[1];
-						int ourid;
-						int oppid;
+					String[] args = sp[1].split(" ");
 
-						try {
-							ourid = OsuApi.getUserId(our);
-							oppid = OsuApi.getUserId(opp);
-							if (ourid == -1 || oppid == -1) {
-								throw new Exception();
-							}
-						} catch (Exception e) {
-							Chat.send("Wrong username.");
-							e.printStackTrace();
-							return true;
-						}
+					int mpid = -1;
+					boolean isteam = false;
+					String ourpname = null;
+					String opppname = null;
 
-						ourname = our;
-						oppname = opp;
-
-						ongoing = true;
-						auto = true;
-						this.mp = mp;
-
-						new AutoThread<H2H>(h2h -> {
-							if (h2h.getWinner() == ourid) {
-								wewon(1);
-							} else if (h2h.getWinner() == oppid) {
-								welost(1);
-							}
-						}, H2H.class).start();
-					} else {
-						boolean blue;
-						if (args[1].equalsIgnoreCase("blue")) {
-							blue = true;
-						} else if (args[1].equalsIgnoreCase("red")) {
-							blue = false;
-						} else {
-							Chat.send("No team specified.");
-							return true;
-						}
-
-						ongoing = true;
-						auto = true;
-						this.mp = mp;
-
-						new AutoThread<TeamVS>(team -> {
-							if (team.blueWon()) {
-								if (blue)
-									wewon(1);
-								else
-									welost(1);
+					for (String origarg : args) {
+						String arg = origarg.toLowerCase();
+						if (arg.startsWith("mp:")) {
+							mpid = Integer.parseInt(arg.substring(3));
+						} else if (arg.startsWith("team:")) {
+							String teamstr = arg.substring(5);
+							if (teamstr.equals("blue")) {
+								isblue = true;
+							} else if (teamstr.equals("red")) {
+								isblue = false;
 							} else {
-								if (blue)
-									welost(1);
-								else
-									wewon(1);
+								continue;
 							}
-						}, TeamVS.class).start();
+							isteam = true;
+						} else if (arg.startsWith("player:")) {
+							String[] players = origarg.substring(7).split(",", 2);
+							if (players.length == 2) {
+								ourpname = players[0].replace('*', ' ');
+								opppname = players[1].replace('*', ' ');
+							}
+						} else if (arg.startsWith("set:")) {
+							set = Integer.parseInt(arg.substring(4));
+						}
 					}
-				}
-				if (!auto) {
+					
+					ongoing = true;
+					
+					if (mpid >= 0) {
+						this.mp = mpid;
+						if (isteam) {
+							new AutoThread<TeamVS>(team -> {
+								if (team.blueWon()) {
+									if (isblue)
+										wewon(1);
+									else
+										welost(1);
+								} else {
+									if (isblue)
+										welost(1);
+									else
+										wewon(1);
+								}
+							}, TeamVS.class).start();
+						} else {
+							int ourid;
+							int oppid;
+							try {
+								ourid = OsuApi.getUserId(ourpname);
+								oppid = OsuApi.getUserId(opppname);
+								if (ourid == -1 || oppid == -1) {
+									throw new Exception();
+								}
+							} catch (Exception e) {
+								Chat.send("Wrong username.");
+								e.printStackTrace();
+								return true;
+							}
+							
+							ourname = ourpname;
+							oppname = opppname;
+							
+							new AutoThread<H2H>(h2h -> {
+								if (h2h.getWinner() == ourid) {
+									wewon(1);
+								} else if (h2h.getWinner() == oppid) {
+									welost(1);
+								}
+							}, H2H.class).start();
+						}
+					} else {
+						Chat.send("Now mods can add score by !win or !lose, but check if you have made some typo.");
+					}
+				} else {
 					ongoing = true;
 					Chat.send("Now mods can add score by !win or !lose");
 				}
@@ -244,12 +251,6 @@ public class MatchCmd implements Cmd {
 				return true;
 
 			Chat.send(event.getUser().getNick() + " -> " + desc);
-		} else if (CmdHistory.checkAndPut(sp[0], event, "!undo", CmdLevel.MOD)) {
-			if (!ongoing)
-				return true;
-
-			undo();
-			Chat.send(getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!mp", CmdLevel.NORMAL)) {
 			if (!ongoing)
 				return true;
@@ -260,12 +261,12 @@ public class MatchCmd implements Cmd {
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!reset", CmdLevel.MOD)) {
 			if (!ongoing)
 				return true;
-			
+
 			if (sp.length != 1 && sp[1].equalsIgnoreCase("all")) {
 				oursetscore = 0;
 				oppsetscore = 0;
 			}
-			
+
 			ourscore = 0;
 			oppscore = 0;
 			Chat.send(getScore());
@@ -276,29 +277,43 @@ public class MatchCmd implements Cmd {
 		return true;
 	}
 
-	private void undo() {
-		if (act != null) {
-			if (act.ourteam) {
-				ourscore -= act.score;
-			} else {
-				oppscore -= act.score;
-			}
-			act = null;
-		}
-	}
-
 	private void welost(int score) {
 		if (score <= 0)
 			return;
 		oppscore += score;
-		act = new Act(false, score);
+		int setscore = getSetScore(oppscore);
+		if (setscore > 0) {
+			oppscore = 0;
+			ourscore = 0;
+			oppsetscore += setscore;
+		}
+	}
+	
+	private int getSetScore(int score) {
+		int add = 0;
+		if (set > 0 && score >= set) {
+			while (true) {
+				score -= set;
+				if (score >= 0) {
+					add++;
+				} else {
+					break;
+				}
+			}
+		}
+		return add;
 	}
 
 	private void wewon(int score) {
 		if (score <= 0)
 			return;
 		ourscore += score;
-		act = new Act(true, score);
+		int setscore = getSetScore(ourscore);
+		if (setscore > 0) {
+			oppscore = 0;
+			ourscore = 0;
+			oursetscore += setscore;
+		}
 	}
 
 }
