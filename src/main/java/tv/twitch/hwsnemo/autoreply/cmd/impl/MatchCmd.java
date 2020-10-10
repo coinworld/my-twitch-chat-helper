@@ -91,6 +91,7 @@ public class MatchCmd implements Cmd {
 		oppsetscore = 0;
 		desc = "Nothing here";
 		ongoing = false;
+		isblue = true;
 		mp = -1;
 		set = -1;
 	}
@@ -217,9 +218,9 @@ public class MatchCmd implements Cmd {
 					n = 0;
 				} else {
 					n = Integer.parseInt(sc);
+					wewon(n);
 				}
 			}
-			wewon(n);
 			Chat.send("PogChamp " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!lose", CmdLevel.MOD)) {
 			if (!ongoing)
@@ -236,9 +237,9 @@ public class MatchCmd implements Cmd {
 					n = 0;
 				} else {
 					n = Integer.parseInt(sc);
+					welost(n);
 				}
 			}
-			welost(n);
 			Chat.send("Sadge " + getScore());
 		} else if (CmdHistory.checkAndPut(sp[0], event, "!over", CmdLevel.MOD)) {
 			if (!ongoing)
