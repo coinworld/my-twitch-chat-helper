@@ -16,6 +16,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.MatchCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.MiscCmd;
+import tv.twitch.hwsnemo.autoreply.cmd.impl.NpCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.TimeCmd;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
@@ -41,15 +42,18 @@ public class Chat {
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags twitch.tv/commands");
 
 			// bot.sendIRC().message(Chat.getDefCh(), "Bot is now connected.");
-
-			cmds.add(new MatchCmd());
-			cmds.add(new MiscCmd());
-			cmds.add(new TimeCmd());
+			if (!Main.isOnlyNP()) {
+				cmds.add(new MatchCmd());
+				cmds.add(new MiscCmd());
+				cmds.add(new TimeCmd());
+			}
+			
+			cmds.add(new NpCmd());
 
 			// sugg.add(new PredictAnswer());
 			// sugg.add(new LinkDetector());
 			// sugg.add(new LanguageDetect());
-			
+
 			while (true) {
 				String c = "";
 				try {
@@ -94,13 +98,15 @@ public class Chat {
 						Main.writeWarn(event.getUser().getLogin() + ": " + msg + " | " + sa.reason());
 						break;
 					}
-				} // there is a possibility that message can be displayed later than the prior message because pircbotx is async
+				} // there is a possibility that message can be displayed later than the prior
+					// message because pircbotx is async
 				if (act == null) {
 					Main.write(event.getUser().getLogin() + ": " + msg);
 				}
 			}
 		}
 	}
+
 	private static final String SERVER = "irc.chat.twitch.tv";
 	private static final int PORT = 6697;
 	private static String name = null;

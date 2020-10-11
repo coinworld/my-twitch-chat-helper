@@ -24,6 +24,12 @@ public class Main {
 	private static PrintStream out;
 
 	private static PrintStream err;
+	
+	private static boolean onlynp = false;
+	
+	public static boolean isOnlyNP() {
+		return onlynp;
+	}
 
 	public static void main(String[] args) throws Exception {
 		AnsiConsole.systemInstall();
@@ -47,6 +53,8 @@ public class Main {
 					defch = map.get(key);
 				} else if (key.equals("twitchname")) {
 					twitchname = map.get(key);
+				} else if (key.equals("onlynp")) {
+					onlynp = map.get(key).equals("yes");
 				}
 			}
 

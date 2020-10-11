@@ -14,9 +14,6 @@ import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class UpdatingMatch {
-	private static boolean eqck(String name, String check) {
-		return name != null ? name.equals(check) : false;
-	}
 	private Map<MatchTypes.Game, List<MatchTypes.Score>> games = new HashMap<>();
 
 	private int mp;
@@ -46,7 +43,7 @@ public class UpdatingMatch {
 	public int getMP() {
 		return mp;
 	}
-	
+
 	public List<Result> getNow() throws Exception {
 		update(OsuApi.request(FEAT, parm));
 		return getResultFrom();
@@ -105,22 +102,23 @@ public class UpdatingMatch {
 
 	private void update(JsonParser jp) throws Exception {
 		JsonToken tk = jp.nextValue();
-		
-		if (over) // the reason for 'over' is to check remaining games and throw an exception 	after giving the last scores.
-			throw new OsuApiException("This match is not active now.");
+
+		if (over) // the reason for 'over' is to check remaining games and throw an exception
+					// after giving the last scores.
+			throw new SendableException("This match is not active now.");
 
 		while (tk != null) {
-			if (tk == JsonToken.START_OBJECT && eqck(jp.currentName(), "match")) {
+			if (tk == JsonToken.START_OBJECT && "match".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
-				while (tk != JsonToken.END_OBJECT && !eqck(jp.currentName(), "match")) {
-					if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
+				while (tk != JsonToken.END_OBJECT && !"match".equals(jp.getCurrentName())) {
+					if (tk == JsonToken.VALUE_STRING && "end_time".equals(jp.getCurrentName())) {
 						over = true;
 					}
 					tk = jp.nextValue();
 				}
-			} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "games")) {
+			} else if (tk == JsonToken.START_ARRAY && "games".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
-				while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "games")) {
+				while (tk != JsonToken.END_ARRAY && !"games".equals(jp.getCurrentName())) {
 					if (tk == JsonToken.START_OBJECT) {
 						int game_id = -1;
 						int team_type = -1;
@@ -130,32 +128,32 @@ public class UpdatingMatch {
 						tk = jp.nextValue();
 						while (tk != JsonToken.END_OBJECT) {
 							if (tk == JsonToken.START_OBJECT) {
-								throw new OsuApiException("Data can't be parsed.");
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "game_id")) {
+								throw new SendableException("Data can't be parsed.");
+							} else if (tk == JsonToken.VALUE_STRING && "game_id".equals(jp.getCurrentName())) {
 								game_id = Integer.parseInt(jp.getText());
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "end_time")) {
+							} else if (tk == JsonToken.VALUE_STRING && "end_time".equals(jp.getCurrentName())) {
 								end = true;
-							} else if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team_type")) {
+							} else if (tk == JsonToken.VALUE_STRING && "team_type".equals(jp.getCurrentName())) {
 								team_type = Integer.parseInt(jp.getText());
-							} else if (tk == JsonToken.START_ARRAY && eqck(jp.currentName(), "scores")) {
+							} else if (tk == JsonToken.START_ARRAY && "scores".equals(jp.getCurrentName())) {
 								tk = jp.nextValue();
-								while (tk != JsonToken.END_ARRAY && !eqck(jp.currentName(), "scores")) {
+								while (tk != JsonToken.END_ARRAY && !"scores".equals(jp.getCurrentName())) {
 									if (tk == JsonToken.START_OBJECT) {
 										int team = -1;
 										int score = -1;
 										int user_id = -1;
 										tk = jp.nextValue();
 										while (tk != JsonToken.END_OBJECT) {
-											if (tk == JsonToken.VALUE_STRING && eqck(jp.currentName(), "team")) {
+											if (tk == JsonToken.VALUE_STRING && "team".equals(jp.getCurrentName())) {
 												team = Integer.parseInt(jp.getText());
 											} else if (tk == JsonToken.VALUE_STRING
-													&& eqck(jp.currentName(), "score")) {
+													&& "score".equals(jp.getCurrentName())) {
 												score = Integer.parseInt(jp.getText());
 											} else if (tk == JsonToken.VALUE_STRING
-													&& eqck(jp.currentName(), "user_id")) {
+													&& "user_id".equals(jp.getCurrentName())) {
 												user_id = Integer.parseInt(jp.getText());
 											} else if (tk == JsonToken.START_OBJECT) {
-												throw new OsuApiException("Data can't be parsed.");
+												throw new SendableException("Data can't be parsed.");
 											}
 											tk = jp.nextValue();
 										}

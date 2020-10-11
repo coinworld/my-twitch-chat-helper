@@ -5,11 +5,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.pircbotx.hooks.events.MessageEvent;
 
-public class CmdHistory {
+public class Check {
 
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
-	public static boolean checkAndPut(String input, MessageEvent event, CmdLevel lvl, String... cmd) {
+	public static boolean andPut(String input, MessageEvent event, CmdLevel lvl, String... cmd) {
 		for (String c : cmd) {
 			if (c.equalsIgnoreCase(input)) {
 				if ((!isUsedRecently(cmd[0]) || lvl.getLevel() > 2) && lvl.check(event)) {

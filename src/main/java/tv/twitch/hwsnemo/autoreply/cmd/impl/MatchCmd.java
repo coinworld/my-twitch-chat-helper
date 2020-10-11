@@ -6,10 +6,10 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdHistory;
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
-import tv.twitch.hwsnemo.autoreply.osu.OsuApiException;
+import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.UpdatingMatch;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
@@ -43,7 +43,7 @@ public class MatchCmd implements Cmd {
 							}
 							Thread.sleep(3000L);
 						}
-					} catch (OsuApiException e) {
+					} catch (SendableException e) {
 						Chat.send("Track Aborted: " + e.getMessage());
 					} catch (Exception e) {
 						Chat.send("An unknown exception occurred. Track is now disabled.");
@@ -106,7 +106,7 @@ public class MatchCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!start")) {
+		if (Check.andPut(sp[0], event, CmdLevel.MOD, "!start")) {
 			if (!ongoing) {
 				if (sp.length != 1) {
 					String[] args = sp[1].split(" ");
@@ -195,15 +195,15 @@ public class MatchCmd implements Cmd {
 			} else {
 				Chat.send("Match is not over yet.");
 			}
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!setinfo")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!setinfo")) {
 			desc = sp[1];
 			Chat.send("Info is now set.");
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!score")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!score")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send(getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!win")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
 
@@ -224,7 +224,7 @@ public class MatchCmd implements Cmd {
 				win();
 			}
 			Chat.send("PogChamp " + getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!lose")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
 
@@ -245,25 +245,25 @@ public class MatchCmd implements Cmd {
 				lose();
 			}
 			Chat.send("Sadge " + getScore());
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!over")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!over")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send("Match is over / " + getScore());
 			reset();
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!info")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!info")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send(event.getUser().getNick() + " -> " + desc);
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!mp")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
 
 			if (mp >= 0) {
 				Chat.send("https://osu.ppy.sh/mp/" + mp);
 			}
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!reset")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!reset")) {
 			if (!ongoing)
 				return true;
 

@@ -6,14 +6,14 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdHistory;
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class MiscCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.VIP, "!roll")) {
+		if (Check.andPut(sp[0], event, CmdLevel.VIP, "!roll")) {
 			int num = 100;
 			if (sp.length != 1) {
 				num = Integer.parseInt(sp[1]);

@@ -6,7 +6,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdHistory;
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class TimeCmd implements Cmd {
@@ -16,7 +16,7 @@ public class TimeCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.MOD, "!setcountdown")) {
+		if (Check.andPut(sp[0], event, CmdLevel.MOD, "!setcountdown")) {
 			if (sp.length != 1) {
 				String[] time = sp[1].split(":", 2);
 				int hr = Integer.parseInt(time[0]);
@@ -39,7 +39,7 @@ public class TimeCmd implements Cmd {
 			} else {
 				Chat.send("Specify time.");
 			}
-		} else if (CmdHistory.checkAndPut(sp[0], event, CmdLevel.NORMAL, "!cd", "!countdown")) {
+		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!cd", "!countdown")) {
 			if (timeset) {
 				long diff = eventtime - System.currentTimeMillis();
 
