@@ -66,10 +66,8 @@ public class NowPlaying {
 						tk = jp.nextValue();	
 						while (!(tk == JsonToken.END_OBJECT && "bm".equals(jp.getCurrentName()))) {
 							if (tk == JsonToken.VALUE_NUMBER_INT && "id".equals(jp.getCurrentName())) {
-								Main.write("id");
 								id = jp.getValueAsInt(-1);
 							} else if (tk == JsonToken.VALUE_NUMBER_INT && "set".equals(jp.getCurrentName())) {
-								Main.write("sets");
 								set = jp.getValueAsInt(-1);
 							} else if (tk == JsonToken.START_OBJECT && "metadata".equals(jp.getCurrentName())) {
 								tk = jp.nextValue();
