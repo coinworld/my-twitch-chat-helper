@@ -3,7 +3,6 @@ package tv.twitch.hwsnemo.autoreply.osu.gosu;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 
 public class NowPlaying {

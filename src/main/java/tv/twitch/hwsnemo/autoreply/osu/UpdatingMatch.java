@@ -110,7 +110,7 @@ public class UpdatingMatch {
 		while (tk != null) {
 			if (tk == JsonToken.START_OBJECT && "match".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
-				while (tk != JsonToken.END_OBJECT && !"match".equals(jp.getCurrentName())) {
+				while (!(tk == JsonToken.END_OBJECT && "match".equals(jp.getCurrentName()))) {
 					if (tk == JsonToken.VALUE_STRING && "end_time".equals(jp.getCurrentName())) {
 						over = true;
 					}
@@ -118,7 +118,7 @@ public class UpdatingMatch {
 				}
 			} else if (tk == JsonToken.START_ARRAY && "games".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
-				while (tk != JsonToken.END_ARRAY && !"games".equals(jp.getCurrentName())) {
+				while (!(tk == JsonToken.END_ARRAY && "games".equals(jp.getCurrentName()))) {
 					if (tk == JsonToken.START_OBJECT) {
 						int game_id = -1;
 						int team_type = -1;
@@ -130,14 +130,14 @@ public class UpdatingMatch {
 							if (tk == JsonToken.START_OBJECT) {
 								throw new SendableException("Data can't be parsed.");
 							} else if (tk == JsonToken.VALUE_STRING && "game_id".equals(jp.getCurrentName())) {
-								game_id = Integer.parseInt(jp.getText());
+								game_id = Integer.parseInt(jp.getValueAsString());
 							} else if (tk == JsonToken.VALUE_STRING && "end_time".equals(jp.getCurrentName())) {
 								end = true;
 							} else if (tk == JsonToken.VALUE_STRING && "team_type".equals(jp.getCurrentName())) {
-								team_type = Integer.parseInt(jp.getText());
+								team_type = Integer.parseInt(jp.getValueAsString());
 							} else if (tk == JsonToken.START_ARRAY && "scores".equals(jp.getCurrentName())) {
 								tk = jp.nextValue();
-								while (tk != JsonToken.END_ARRAY && !"scores".equals(jp.getCurrentName())) {
+								while (!(tk == JsonToken.END_ARRAY && "scores".equals(jp.getCurrentName()))) {
 									if (tk == JsonToken.START_OBJECT) {
 										int team = -1;
 										int score = -1;
@@ -145,13 +145,13 @@ public class UpdatingMatch {
 										tk = jp.nextValue();
 										while (tk != JsonToken.END_OBJECT) {
 											if (tk == JsonToken.VALUE_STRING && "team".equals(jp.getCurrentName())) {
-												team = Integer.parseInt(jp.getText());
+												team = Integer.parseInt(jp.getValueAsString());
 											} else if (tk == JsonToken.VALUE_STRING
 													&& "score".equals(jp.getCurrentName())) {
-												score = Integer.parseInt(jp.getText());
+												score = Integer.parseInt(jp.getValueAsString());
 											} else if (tk == JsonToken.VALUE_STRING
 													&& "user_id".equals(jp.getCurrentName())) {
-												user_id = Integer.parseInt(jp.getText());
+												user_id = Integer.parseInt(jp.getValueAsString());
 											} else if (tk == JsonToken.START_OBJECT) {
 												throw new SendableException("Data can't be parsed.");
 											}
