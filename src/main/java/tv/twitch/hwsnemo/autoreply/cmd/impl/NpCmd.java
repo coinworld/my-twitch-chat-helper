@@ -25,7 +25,7 @@ public class NpCmd implements Cmd {
 				return true;
 			}
 			
-			Chat.send(String.format("%s - %s [%s] (by %s) osu.ppy.sh/b/%d", np.getArtist(), np.getTitle(), np.getDifficulty(), np.getMapper(), np.getId()));
+			Chat.send(String.format("%s - %s [%s] (by %s) osu.ppy.sh/s/%d", np.getArtist(), np.getTitle(), np.getDifficulty(), np.getMapper(), np.getSet()));
 			return true;
 		}
 		return false;

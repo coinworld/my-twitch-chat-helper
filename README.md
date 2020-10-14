@@ -11,6 +11,8 @@ oauth oauth:<twitch oauth>
 twitchname <your twitch name>
 defch #<channel to join>
 osuapi <your osu api key>
+onlynp <yes or no>
+enablegosu <yes or no>
 ```
 
 You can get **oauth** here: https://twitchapps.com/tmi/

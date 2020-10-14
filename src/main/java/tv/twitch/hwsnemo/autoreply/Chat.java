@@ -2,6 +2,7 @@ package tv.twitch.hwsnemo.autoreply;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -42,13 +43,15 @@ public class Chat {
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags twitch.tv/commands");
 
 			// bot.sendIRC().message(Chat.getDefCh(), "Bot is now connected.");
-			if (!Main.isOnlyNP()) {
+			Map<String, String> conf = Main.getConfig();
+			if (!conf.containsKey("enablegosu") || conf.get("enablegosu").equals("yes")) {
+				cmds.add(new NpCmd());
+			}
+			if (!(!conf.containsKey("onlynp") || conf.get("onlynp").equals("yes"))) {
 				cmds.add(new MatchCmd());
 				cmds.add(new MiscCmd());
 				cmds.add(new TimeCmd());
 			}
-			
-			cmds.add(new NpCmd());
 
 			// sugg.add(new PredictAnswer());
 			// sugg.add(new LinkDetector());
@@ -64,7 +67,7 @@ public class Chat {
 							act = null;
 							Main.write("Action done.");
 						}
-					} else if (!c.isBlank()) {
+					} else if (!c.isEmpty()) {
 						bot.sendIRC().message(Chat.getDefCh(), c);
 						Main.write(Chat.getName() + ": " + c);
 					}

@@ -2,6 +2,7 @@ package tv.twitch.hwsnemo.autoreply;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Map;
 
 import org.fusesource.jansi.AnsiConsole;
@@ -24,11 +25,11 @@ public class Main {
 	private static PrintStream out;
 
 	private static PrintStream err;
-	
-	private static boolean onlynp = false;
-	
-	public static boolean isOnlyNP() {
-		return onlynp;
+
+	private static Map<String, String> config = Collections.emptyMap();
+
+	public static Map<String, String> getConfig() {
+		return config;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -43,18 +44,16 @@ public class Main {
 			String defch = null;
 			String twitchname = null;
 
-			Map<String, String> map = ConfigFile.get("config.txt");
-			for (String key : map.keySet()) {
+			config = Collections.unmodifiableMap(ConfigFile.get("config.txt"));
+			for (String key : config.keySet()) {
 				if (key.equals("oauth")) {
-					oauth = map.get(key);
+					oauth = config.get(key);
 				} else if (key.equals("osuapi")) {
-					osuapi = map.get(key);
+					osuapi = config.get(key);
 				} else if (key.equals("defch")) {
-					defch = map.get(key);
+					defch = config.get(key);
 				} else if (key.equals("twitchname")) {
-					twitchname = map.get(key);
-				} else if (key.equals("onlynp")) {
-					onlynp = map.get(key).equals("yes");
+					twitchname = config.get(key);
 				}
 			}
 
@@ -69,7 +68,11 @@ public class Main {
 
 			out = System.out;
 			err = System.err;
-			PrintStream ps = new PrintStream(OutputStream.nullOutputStream());
+			PrintStream ps = new PrintStream(new OutputStream() {
+				@Override
+				public void write(int b) {
+				}
+			});
 			System.setOut(ps);
 			System.setErr(ps); // i don't want to see slf4j errors.
 
