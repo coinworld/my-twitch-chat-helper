@@ -19,6 +19,9 @@ You can get **oauth** here: https://twitchapps.com/tmi/
 
 for **osu! api**: https://osu.ppy.sh/p/api/
 
+`onlynp` and `enablegosu` are not required. The bot will enable every command available if not set.
+I needed them because gosumemory should be running on streamer's pc and I needed control over other features on my pc.
+
 ### predict.txt (example)
 ```
 skin !skin @%s
@@ -35,7 +38,7 @@ There are some basic commands you can use right away. You can try to add some ne
 
 ### Match Commands
 
-`!start mp:<mp id> team:<blue/red>* / *!start mp:<mp id> player:<me>,<opponent>` :
+`!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
 **[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). You can also use `set:<number of games>` to automatically reset score and update set score.
 
 `!start` :

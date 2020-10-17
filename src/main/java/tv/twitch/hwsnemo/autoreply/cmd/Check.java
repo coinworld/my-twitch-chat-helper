@@ -9,15 +9,20 @@ public class Check {
 
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
-	public static boolean andPut(String input, MessageEvent event, CmdLevel lvl, String... cmd) {
-		for (String c : cmd) {
-			if (c.equalsIgnoreCase(input)) {
-				if ((!isUsedRecently(cmd[0]) || lvl.getLevel() > 2) && lvl.check(event)) {
-					lastcmd.put(cmd[0], System.currentTimeMillis());
-					return true;
+	public static boolean andPut(String input, MessageEvent event, CmdLevel lvl, String maincmd, String... cmd) {
+		boolean right = maincmd.equalsIgnoreCase(input);
+		if (!right) {
+			for (String c : cmd) {
+				if (c.equalsIgnoreCase(input)) {
+					right = true;
+					break;
 				}
-				break;
 			}
+		}
+		
+		if (right && (!isUsedRecently(maincmd) || lvl.getLevel() > 2) && lvl.check(event)) {
+			lastcmd.put(maincmd, System.currentTimeMillis());
+			return true;
 		}
 		return false;
 	}
