@@ -13,7 +13,7 @@ public class NpCmd implements Cmd {
 
 	@Override
 	public boolean go(String[] sp, MessageEvent event) {
-		if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!np", "!nowplaying")) {
+		if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!np", "!nowplaying", "!map")) {
 			NowPlaying np;
 			try {
 				np = NowPlaying.get();
@@ -24,8 +24,20 @@ public class NpCmd implements Cmd {
 				Chat.send("An unknown exception occurred.");
 				return true;
 			}
-			
-			Chat.send(String.format("%s - %s [%s] (by %s) osu.ppy.sh/s/%d", np.getArtist(), np.getTitle(), np.getDifficulty(), np.getMapper(), np.getSet()));
+
+			StringBuilder sb = new StringBuilder(np.getArtist()).append(" - ").append(np.getTitle()).append(" [")
+					.append(np.getDifficulty()).append("] (by ").append(np.getMapper()).append(" | ")
+					.append(np.getFullSR()).append('*');
+			if (np.getMinBPM() > 0 && np.getMaxBPM() > 0) {
+				if (np.getMinBPM() == np.getMaxBPM()) {
+					sb.append(" | ").append(np.getMinBPM()).append("bpm");
+				} else {
+					sb.append(" | BPM: ").append(np.getMinBPM()).append('-').append(np.getMaxBPM());
+				}
+			}
+			sb.append(") osu.ppy.sh/s/").append(np.getSet());
+
+			Chat.send(sb.toString());
 			return true;
 		}
 		return false;

@@ -20,7 +20,7 @@ public class Check {
 			}
 		}
 		
-		if (right && (!isUsedRecently(maincmd) || lvl.getLevel() > 2) && lvl.check(event)) {
+		if (right && (!isUsedRecently(maincmd) || CmdLevel.MOD.check(event)) && lvl.check(event)) {
 			lastcmd.put(maincmd, System.currentTimeMillis());
 			return true;
 		}

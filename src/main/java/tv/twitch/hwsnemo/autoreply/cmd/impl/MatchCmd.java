@@ -5,13 +5,12 @@ import java.util.List;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
-import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
+import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.InstantMatch;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
-import tv.twitch.hwsnemo.autoreply.osu.UpdatingMatch;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
@@ -90,7 +89,7 @@ public class MatchCmd implements Cmd {
 		oppname = "Opponent";
 		oppscore = 0;
 		oppsetscore = 0;
-		desc = "Nothing here";
+		desc = null;
 		ongoing = false;
 		isblue = true;
 		mp = -1;
@@ -203,7 +202,7 @@ public class MatchCmd implements Cmd {
 			if (!ongoing)
 				return true;
 
-			Chat.send(getScore());
+			Chat.send(getScore() + (desc != null ? (" / " + desc) : ""));
 		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
@@ -252,11 +251,6 @@ public class MatchCmd implements Cmd {
 
 			Chat.send("Match is over / " + getScore());
 			reset();
-		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!info")) {
-			if (!ongoing)
-				return true;
-
-			Chat.send(event.getUser().getNick() + " -> " + desc);
 		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
