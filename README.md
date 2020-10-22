@@ -11,16 +11,25 @@ oauth oauth:<twitch oauth>
 twitchname <your twitch name>
 defch #<channel to join>
 osuapi <your osu api key>
-onlynp <yes or no>
-enablegosu <yes or no>
+chatprefix <prefix>
+cmdcooldown <duration in milliseconds, 1 sec = 1000>
+
+enablechatlog <yn>
+enablematchcmd <yn>
+enablemisccmd <yn>
+enablenpcmd <yn>
+enabletimecmd <yn>
+enablelangdetect <yn>
+enablelinkdetect <yn>
+enablepredict <yn>
 ```
 
 You can get **oauth** here: https://twitchapps.com/tmi/
 
 for **osu! api**: https://osu.ppy.sh/p/api/
 
-`onlynp` and `enablegosu` are not required. The bot will enable every command available if not set.
-I needed them because gosumemory should be running on streamer's pc and I needed control over other features on my pc.
+Every `<yn>` entries are either `yes` or anything else.
+This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
 
 ### predict.txt (example)
 ```

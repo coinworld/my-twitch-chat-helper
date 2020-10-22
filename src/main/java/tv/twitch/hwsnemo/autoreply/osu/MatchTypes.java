@@ -11,19 +11,20 @@ public class MatchTypes {
 			this.game_id = game_id;
 			this.team_type = team_type;
 		}
+
 		@Override
 		public boolean equals(Object o) {
 			return (o instanceof Game) ? ((Game) o).game_id == this.game_id : false;
 		}
-	
+
 		int getGame_id() {
 			return game_id;
 		}
-		
+
 		int getTeam_type() {
 			return team_type;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return game_id;
@@ -42,13 +43,15 @@ public class MatchTypes {
 			this.score = score;
 			this.user_id = user_id;
 		}
+
 		int getScore() {
 			return score;
 		}
+
 		int getTeam() {
 			return team;
 		}
-	
+
 		int getUser_id() {
 			return user_id;
 		}

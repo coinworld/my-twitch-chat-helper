@@ -12,7 +12,7 @@ public class ConfigFile {
 		Files.lines(new File(filename).toPath()).forEach(line -> {
 			String[] sp = line.split(" ", 2);
 			if (sp.length == 2) {
-				map.put(sp[0], sp[1]);
+				map.put(sp[0].toLowerCase(), sp[1]);
 			}
 		});
 		return map;

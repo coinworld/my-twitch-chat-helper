@@ -52,7 +52,7 @@ public class NowPlaying {
 	public String getDifficulty() {
 		return difficulty;
 	}
-	
+
 	public int getMinBPM() {
 		return minBPM;
 	}
@@ -60,7 +60,7 @@ public class NowPlaying {
 	public int getMaxBPM() {
 		return maxBPM;
 	}
-	
+
 	public float getFullSR() {
 		return fullSR;
 	}
@@ -121,7 +121,8 @@ public class NowPlaying {
 											}
 											tk = jp.nextValue();
 										}
-									} else if (tk == JsonToken.VALUE_NUMBER_FLOAT && "fullSR".equals(jp.getCurrentName())) {
+									} else if (tk == JsonToken.VALUE_NUMBER_FLOAT
+											&& "fullSR".equals(jp.getCurrentName())) {
 										fullSR = jp.getFloatValue();
 									}
 									tk = jp.nextValue();
@@ -136,7 +137,8 @@ public class NowPlaying {
 			tk = jp.nextValue();
 		}
 
-		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null || difficulty == null || fullSR < 0) {
+		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null || difficulty == null
+				|| fullSR < 0) {
 			throw new SendableException("Failed to get current song.");
 		}
 

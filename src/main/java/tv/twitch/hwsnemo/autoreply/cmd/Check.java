@@ -5,6 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.pircbotx.hooks.events.MessageEvent;
 
+import tv.twitch.hwsnemo.autoreply.Main;
+import tv.twitch.hwsnemo.autoreply.NotEnabledException;
+
 public class Check {
 
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
@@ -19,7 +22,7 @@ public class Check {
 				}
 			}
 		}
-		
+
 		if (right && (!isUsedRecently(maincmd) || CmdLevel.MOD.check(event)) && lvl.check(event)) {
 			lastcmd.put(maincmd, System.currentTimeMillis());
 			return true;
@@ -27,11 +30,23 @@ public class Check {
 		return false;
 	}
 
+	private static long cooldown = 3000L;
+
+	public static void setCooldown(long time) {
+		cooldown = time;
+	}
+
 	private static boolean isUsedRecently(String cmd) {
 		if (lastcmd.containsKey(cmd)) {
 			long diff = System.currentTimeMillis() - lastcmd.get(cmd);
-			return diff < 3000L;
+			return diff < cooldown;
 		}
 		return false;
+	}
+
+	public static void throwOr(String key) throws NotEnabledException {
+		if (!Main.isYes(key)) {
+			throw new NotEnabledException();
+		}
 	}
 }

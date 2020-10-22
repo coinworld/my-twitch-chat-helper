@@ -6,6 +6,8 @@ import java.util.Map;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.ConfigFile;
+import tv.twitch.hwsnemo.autoreply.NotEnabledException;
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
@@ -33,7 +35,9 @@ public class PredictAnswer implements Suggest {
 
 	private Map<String, String> map;
 
-	public PredictAnswer() {
+	public PredictAnswer() throws NotEnabledException {
+		Check.throwOr("enablepredict");
+
 		try {
 			map = ConfigFile.get("predict.txt");
 		} catch (IOException e) {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
@@ -16,6 +17,10 @@ import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class MatchCmd implements Cmd {
+
+	public MatchCmd() throws NotEnabledException {
+		Check.throwOr("enablematchcmd");
+	}
 
 	private interface AutoRun<T extends Result> {
 		void go(T result);
@@ -77,9 +82,9 @@ public class MatchCmd implements Cmd {
 	private String desc;
 
 	private volatile boolean ongoing;
-	
+
 	private int set;
-	
+
 	private boolean isblue;
 
 	private void reset() {
@@ -140,9 +145,9 @@ public class MatchCmd implements Cmd {
 							set = Integer.parseInt(arg.substring(4));
 						}
 					}
-					
+
 					ongoing = true;
-					
+
 					if (mpid >= 0) {
 						this.mp = mpid;
 						if (isteam) {
@@ -173,10 +178,10 @@ public class MatchCmd implements Cmd {
 								e.printStackTrace();
 								return true;
 							}
-							
+
 							ourname = ourpname;
 							oppname = opppname;
-							
+
 							new AutoThread<H2H>(h2h -> {
 								if (h2h.getWinner() == ourid) {
 									win();

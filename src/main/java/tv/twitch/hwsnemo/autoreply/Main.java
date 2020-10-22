@@ -1,5 +1,6 @@
 package tv.twitch.hwsnemo.autoreply;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -26,10 +27,24 @@ public class Main {
 
 	private static PrintStream err;
 
-	private static Map<String, String> config = Collections.emptyMap();
+	private static Map<String, String> config = null;
 
 	public static Map<String, String> getConfig() {
+		if (config == null) {
+			Map<String, String> conf;
+			try {
+				conf = Collections.unmodifiableMap(ConfigFile.get("config.txt"));
+				config = conf;
+			} catch (IOException e) {
+				write("Failed to load Config.");
+				e.printStackTrace();
+			}
+		}
 		return config;
+	}
+
+	public static boolean isYes(String key) {
+		return !config.containsKey("enablegosu") || config.get(key).equals("yes");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -37,14 +52,14 @@ public class Main {
 
 		reader = LineReaderBuilder.builder().build();
 		term = reader.getTerminal();
+		getConfig();
 
-		if (RUN) {
+		if (RUN && config != null) {
 			String oauth = null;
 			String osuapi = null;
 			String defch = null;
 			String twitchname = null;
 
-			config = Collections.unmodifiableMap(ConfigFile.get("config.txt"));
 			for (String key : config.keySet()) {
 				if (key.equals("oauth")) {
 					oauth = config.get(key);

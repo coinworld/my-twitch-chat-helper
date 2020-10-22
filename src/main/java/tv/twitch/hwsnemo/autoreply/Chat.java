@@ -1,6 +1,5 @@
 package tv.twitch.hwsnemo.autoreply;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,25 +13,27 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.impl.MatchCmd;
-import tv.twitch.hwsnemo.autoreply.cmd.impl.MiscCmd;
-import tv.twitch.hwsnemo.autoreply.cmd.impl.NpCmd;
-import tv.twitch.hwsnemo.autoreply.cmd.impl.TimeCmd;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
 public class Chat {
 
 	private static class Listener extends ListenerAdapter {
-		private final List<Cmd> cmds = new ArrayList<>();
+		private final List<Cmd> cmds = DefaultConstructors.createCmds();
 
-		private final List<Suggest> sugg = new ArrayList<>();
+		private final List<Suggest> sugg = DefaultConstructors.createSuggs();
+		private final boolean log = Main.isYes("enablechatlog");
 		private volatile SuggestAction act = null;
 
 		@Override
 		public void onConnect(ConnectEvent event) throws Exception {
 			Main.revert();
+
+			if (Main.getConfig().containsKey("cmdcooldown")) {
+				Check.setCooldown(Long.parseLong(Main.getConfig().get("cmdcooldown")));
+			}
 
 			Main.write("Connected. Ctrl+C to exit.");
 			PircBotX bot = event.getBot();
@@ -41,21 +42,6 @@ public class Chat {
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags");
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/membership");
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags twitch.tv/commands");
-
-			// bot.sendIRC().message(Chat.getDefCh(), "Bot is now connected.");
-			Map<String, String> conf = Main.getConfig();
-			if (!conf.containsKey("enablegosu") || conf.get("enablegosu").equals("yes")) {
-				cmds.add(new NpCmd());
-			}
-			if (!(!conf.containsKey("onlynp") || conf.get("onlynp").equals("yes"))) {
-				cmds.add(new MatchCmd());
-				cmds.add(new MiscCmd());
-				cmds.add(new TimeCmd());
-			}
-
-			// sugg.add(new PredictAnswer());
-			// sugg.add(new LinkDetector());
-			// sugg.add(new LanguageDetect());
 
 			while (true) {
 				String c = "";
@@ -69,7 +55,7 @@ public class Chat {
 						}
 					} else if (!c.isEmpty()) {
 						bot.sendIRC().message(Chat.getDefCh(), c);
-						Main.write(Chat.getName() + ": " + c);
+						Main.write("* " + Chat.getName() + ": " + c);
 					}
 				} catch (UserInterruptException e) {
 					break;
@@ -102,8 +88,8 @@ public class Chat {
 						break;
 					}
 				} // there is a possibility that message can be displayed later than the prior
-					// message because pircbotx is async
-				if (act == null) {
+					// message if finding suggestions takes long because pircbotx is async
+				if (act == null && log) {
 					Main.write(event.getUser().getLogin() + ": " + msg);
 				}
 			}
@@ -117,9 +103,17 @@ public class Chat {
 
 	private static PircBotX bot = null;
 
+	private static String prefix = "[BOT] ";
+
 	protected static void create(String name, String auth, String defch) throws Exception {
 		Chat.name = name;
 		Chat.defch = defch;
+
+		Map<String, String> con = Main.getConfig();
+		if (con.containsKey("chatprefix")) {
+			prefix = con.get("chatprefix");
+		}
+
 		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
 				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)
 				.addAutoJoinChannel(defch).addListener(new Listener()).buildConfiguration());
@@ -138,7 +132,7 @@ public class Chat {
 	}
 
 	public static void send(String msg) {
-		getBot().sendIRC().message(getDefCh(), ((msg.startsWith("/") || msg.startsWith("!")) ? "" : "[BOT] ") + msg);
+		getBot().sendIRC().message(getDefCh(), ((msg.startsWith("/") || msg.startsWith("!")) ? "" : prefix) + msg);
 		Main.write("<SEND> " + msg);
 	}
 }

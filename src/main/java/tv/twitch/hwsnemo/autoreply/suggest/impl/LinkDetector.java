@@ -4,11 +4,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.NotEnabledException;
+import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
 public class LinkDetector implements Suggest {
-	
+
+	public LinkDetector() throws NotEnabledException {
+		Check.throwOr("enablelinkdetect");
+	}
+
 	public class LinkSuggAct implements SuggestAction {
 
 		private final String name;

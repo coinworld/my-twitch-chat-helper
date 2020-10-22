@@ -5,11 +5,16 @@ import java.util.Calendar;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
-import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
+import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
+import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class TimeCmd implements Cmd {
+
+	public TimeCmd() throws NotEnabledException {
+		Check.throwOr("enabletimecmd");
+	}
 
 	private boolean timeset = false;
 	private long eventtime;

@@ -22,7 +22,8 @@ public enum CmdLevel {
 			return badge.contains("moderator") || badge.contains("broadcaster");
 		}
 		return false;
-	} // maybe i can make this method abstract and let these enums implement this but yeah
+	} // maybe i can make this method abstract and let these enums implement this but
+		// yeah
 
 	public int getLevel() {
 		return LEVEL;
