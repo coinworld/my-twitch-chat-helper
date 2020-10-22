@@ -11,8 +11,8 @@ oauth oauth:<twitch oauth>
 twitchname <your twitch name>
 defch #<channel to join>
 osuapi <your osu api key>
-chatprefix <prefix>
-cmdcooldown <duration in milliseconds, 1 sec = 1000>
+chatprefix <prefix, default is "[BOT] ">
+cmdcooldown <duration in milliseconds, 1 sec = 1000, default is 3000>
 
 enablechatlog <yn>
 enablematchcmd <yn>
@@ -30,6 +30,8 @@ for **osu! api**: https://osu.ppy.sh/p/api/
 
 Every `<yn>` entries are either `yes` or anything else.
 This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
+
+By default, every enablable entry is enabled by default, so not having them set just enables them.
 
 ### predict.txt (example)
 ```

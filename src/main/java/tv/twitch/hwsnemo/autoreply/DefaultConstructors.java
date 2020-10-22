@@ -34,7 +34,7 @@ public class DefaultConstructors {
 			try {
 				cmds.add(c.construct());
 			} catch (NotEnabledException e) {
-
+				
 			} catch (Exception e) {
 				Main.write("Error while creating cmd instances: " + e.getMessage());
 			}

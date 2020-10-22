@@ -44,7 +44,7 @@ public class Main {
 	}
 
 	public static boolean isYes(String key) {
-		return !config.containsKey("enablegosu") || config.get(key).equals("yes");
+		return !config.containsKey(key) || config.get(key).equalsIgnoreCase("yes");
 	}
 
 	public static void main(String[] args) throws Exception {
