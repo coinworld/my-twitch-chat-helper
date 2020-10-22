@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
+import tv.twitch.hwsnemo.autoreply.cmd.impl.DebugCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.MatchCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.MiscCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.NpCmd;
@@ -22,6 +23,7 @@ public class DefaultConstructors {
 		cmdcons.add(MiscCmd::new);
 		cmdcons.add(NpCmd::new);
 		cmdcons.add(TimeCmd::new);
+		cmdcons.add(DebugCmd::new);
 
 		suggcons.add(LanguageDetect::new);
 		suggcons.add(LinkDetector::new);

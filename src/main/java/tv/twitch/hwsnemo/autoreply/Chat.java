@@ -103,7 +103,7 @@ public class Chat {
 
 	private static PircBotX bot = null;
 
-	private static String prefix = "[BOT] ";
+	private static String prefix = "";
 
 	protected static void create(String name, String auth, String defch) throws Exception {
 		Chat.name = name;

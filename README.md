@@ -11,7 +11,7 @@ oauth oauth:<twitch oauth>
 twitchname <your twitch name>
 defch #<channel to join>
 osuapi <your osu api key>
-chatprefix <prefix, default is "[BOT] ">
+chatprefix <prefix>
 cmdcooldown <duration in milliseconds, 1 sec = 1000, default is 3000>
 
 enablechatlog <yn>
