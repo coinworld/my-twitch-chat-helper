@@ -3,7 +3,6 @@ package tv.twitch.hwsnemo.autoreply.osu.gosu;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 
 public class NowPlaying {
@@ -125,7 +124,6 @@ public class NowPlaying {
 									} else if ("fullSR".equals(jp.getCurrentName())) {
 										fullSR = Float.parseFloat(jp.getText());
 									}
-									Main.write(tk.name() + " : " + jp.getCurrentValue() + " : " + jp.getText());
 									tk = jp.nextValue();
 								}
 							}
