@@ -139,7 +139,9 @@ public class NowPlaying {
 
 		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null || difficulty == null
 				|| fullSR < 0) {
-			throw new SendableException("Failed to get current song.");
+			throw new SendableException("Failed to get current song.",
+					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f", id,
+							set, artist, title, mapper, difficulty, fullSR));
 		}
 
 		return new NowPlaying(id, set, artist, title, mapper, difficulty, minBPM, maxBPM, fullSR);
