@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JTabbedPane;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -161,7 +159,7 @@ public class InstantMatch {
 								int bestid = -1;
 								int bestscore = -1;
 								boolean draw = false;
-								for (InstantMatch.Score score : scores) {
+								for (Score score : scores) {
 									if (score.getScore() > bestscore) {
 										bestscore = score.getScore();
 										bestid = score.getUser_id();
@@ -180,7 +178,7 @@ public class InstantMatch {
 							} else if (team_type == 2) { // team vs
 								int blue = -1;
 								int red = -1;
-								for (InstantMatch.Score score : scores) {
+								for (Score score : scores) {
 									if (score.getTeam() == 1) {
 										blue += score.getScore();
 									} else if (score.getTeam() == 2) {
@@ -224,7 +222,7 @@ public class InstantMatch {
 			if (jt.isObjectStart("match")) {
 				jt.loopInObject("match", () -> {
 					if (jt.equalName("end_time")) {
-						over = jt.token() == JsonToken.VALUE_STRING;
+						over = !jt.isNull();
 					}
 				});
 			} else if (jt.isArrayStart("games")) {
@@ -237,7 +235,7 @@ public class InstantMatch {
 								throw new SendableException("Data can't be parsed.");
 							} else if (jt.equalName("game_id")) {
 								game.game_id = jt.getInt();
-							} else if (jt.equalName("end_time")) {
+							} else if (jt.equalName("end_time") && !jt.isNull()) {
 								game.end = true;
 							} else if (jt.equalName("team_type")) {
 								game.team_type = jt.getInt();
@@ -269,7 +267,7 @@ public class InstantMatch {
 								int bestid = -1;
 								int bestscore = -1;
 								boolean draw = false;
-								for (InstantMatch.Score score : scores) {
+								for (Score score : scores) {
 									if (score.score > bestscore) {
 										bestscore = score.score;
 										bestid = score.user_id;
@@ -288,7 +286,7 @@ public class InstantMatch {
 							} else if (game.team_type == 2) { // team vs
 								int blue = -1;
 								int red = -1;
-								for (InstantMatch.Score score : scores) {
+								for (Score score : scores) {
 									if (score.team == 1) {
 										blue += score.score;
 									} else if (score.team == 2) {

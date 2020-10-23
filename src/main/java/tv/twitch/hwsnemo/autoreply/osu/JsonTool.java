@@ -16,6 +16,10 @@ public class JsonTool {
 	public static interface ThrowableRunnable {
 		public void run() throws Exception;
 	}
+	
+	public boolean isNull() {
+		return tk == JsonToken.VALUE_NULL;
+	}
 
 	public boolean isObjectStart(String name) {
 		try {
