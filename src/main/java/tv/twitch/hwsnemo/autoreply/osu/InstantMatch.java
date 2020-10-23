@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JTabbedPane;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -35,19 +37,65 @@ public class InstantMatch {
 	public int getMP() {
 		return mp;
 	}
+	
+	private static class Game {
+		int game_id = -1;
+		int team_type = -1;
+		boolean end = false;
 
-	public List<Result> getNow() throws Exception {
+
+		@Override
+		public boolean equals(Object o) {
+			return (o instanceof Game) ? ((Game) o).game_id == this.game_id : false;
+		}
+
+		@Override
+		public int hashCode() {
+			return game_id;
+		}
+	}
+
+	private static class Score {
+		int team;
+	
+		int score;
+	
+		int user_id;
+	
+		Score(int team, int score, int user_id) {
+			this.team = team;
+			this.score = score;
+			this.user_id = user_id;
+		}
+		
+		Score() {
+			
+		}
+	
+		int getScore() {
+			return score;
+		}
+	
+		int getTeam() {
+			return team;
+		}
+	
+		int getUser_id() {
+			return user_id;
+		}
+	}
+	
+	private class Lastgame {
+		int lastid;
+	}
+	
+	public List<Result> oldGetNow() throws Exception {
 		List<Result> res = new ArrayList<>();
 
 		JsonParser jp = OsuApi.request(FEAT, parm);
 		JsonToken tk = jp.nextValue();
-
 		int lastid = lastgame;
-
-		if (over) // the reason for 'over' is to check remaining games and throw an exception
-					// after giving the last scores.
-			throw new SendableException("This match is not active now.");
-
+		
 		while (tk != null) {
 			if (tk == JsonToken.START_OBJECT && "match".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
@@ -64,7 +112,7 @@ public class InstantMatch {
 						int game_id = -1;
 						int team_type = -1;
 						boolean end = false;
-						List<MatchTypes.Score> scores = new ArrayList<>();
+						List<InstantMatch.Score> scores = new ArrayList<>();
 
 						tk = jp.nextValue();
 						while (tk != JsonToken.END_OBJECT) {
@@ -99,7 +147,7 @@ public class InstantMatch {
 											tk = jp.nextValue();
 										}
 										if (team >= 0 && score >= 0 && user_id >= 0)
-											scores.add(new MatchTypes.Score(team, score, user_id));
+											scores.add(new InstantMatch.Score(team, score, user_id));
 									}
 									tk = jp.nextValue();
 								}
@@ -113,7 +161,7 @@ public class InstantMatch {
 								int bestid = -1;
 								int bestscore = -1;
 								boolean draw = false;
-								for (MatchTypes.Score score : scores) {
+								for (InstantMatch.Score score : scores) {
 									if (score.getScore() > bestscore) {
 										bestscore = score.getScore();
 										bestid = score.getUser_id();
@@ -132,7 +180,7 @@ public class InstantMatch {
 							} else if (team_type == 2) { // team vs
 								int blue = -1;
 								int red = -1;
-								for (MatchTypes.Score score : scores) {
+								for (InstantMatch.Score score : scores) {
 									if (score.getTeam() == 1) {
 										blue += score.getScore();
 									} else if (score.getTeam() == 2) {
@@ -156,6 +204,111 @@ public class InstantMatch {
 			tk = jp.nextValue();
 		}
 		lastgame = lastid;
+		
+		return res;
+	}
+
+	public List<Result> getNow() throws Exception {
+		List<Result> res = new ArrayList<>();
+
+		JsonParser jp = OsuApi.request(FEAT, parm);
+		Lastgame lg = new Lastgame();
+		lg.lastid = lastgame;
+
+		if (over) // the reason for 'over' is to check remaining games and throw an exception
+					// after giving the last scores.
+			throw new SendableException("This match is not active now.");
+		
+		JsonTool jt = new JsonTool(jp);
+		jt.loopUntilEnd(() -> {
+			if (jt.isObjectStart("match")) {
+				jt.loopInObject("match", () -> {
+					if (jt.equalName("end_time")) {
+						over = jt.token() == JsonToken.VALUE_STRING;
+					}
+				});
+			} else if (jt.isArrayStart("games")) {
+				jt.loopInArray("games", () -> {
+					if (jt.isObjectStart(null)) {
+						Game game = new Game();
+						List<Score> scores = new ArrayList<>();
+						jt.loopInObject(null, () -> {
+							if (jt.isObjectStart(null)) {
+								throw new SendableException("Data can't be parsed.");
+							} else if (jt.equalName("game_id")) {
+								game.game_id = jt.getInt();
+							} else if (jt.equalName("end_time")) {
+								game.end = true;
+							} else if (jt.equalName("team_type")) {
+								game.team_type = jt.getInt();
+							} else if (jt.isArrayStart("scores")) {
+								jt.loopInArray("scores", () -> {
+									if (jt.isObjectStart(null)) {
+										Score score = new Score();
+										jt.loopInObject(null, () -> {
+											if (jt.isObjectStart(null)) {
+												throw new SendableException("Data can't be parsed.");
+											} else if (jt.equalName("team")) {
+												score.team = jt.getInt();
+											} else if (jt.equalName("score")) {
+												score.score = jt.getInt();
+											} else if (jt.equalName("user_id")) {
+												score.user_id = jt.getInt();
+											}
+										});
+										if (score.team >= 0 && score.score >= 0 && score.user_id >= 0)
+											scores.add(score);
+									}
+								});
+							}
+						});
+						if (game.end && game.game_id > lastgame && game.game_id >= 0 && game.team_type >= 0 && !scores.isEmpty()) {
+							if (game.game_id > lg.lastid)
+								lg.lastid = game.game_id;
+							if (game.team_type == 0) { // head to head
+								int bestid = -1;
+								int bestscore = -1;
+								boolean draw = false;
+								for (InstantMatch.Score score : scores) {
+									if (score.score > bestscore) {
+										bestscore = score.score;
+										bestid = score.user_id;
+										draw = false;
+									} else if (score.score == bestscore) {
+										draw = true;
+									}
+								}
+
+								if (bestid >= 0 && bestscore >= 0) {
+									if (!draw)
+										res.add(new H2H(bestid));
+									else
+										res.add(new H2H());
+								}
+							} else if (game.team_type == 2) { // team vs
+								int blue = -1;
+								int red = -1;
+								for (InstantMatch.Score score : scores) {
+									if (score.team == 1) {
+										blue += score.score;
+									} else if (score.team == 2) {
+										red += score.score;
+									}
+								}
+
+								if (blue >= 0 && red >= 0) {
+									if (blue != red)
+										res.add(new TeamVS(blue > red));
+									else
+										res.add(new TeamVS());
+								}
+							}
+						}
+					}
+				});
+			}
+		});
+		lastgame = lg.lastid;
 		return res;
 	}
 }

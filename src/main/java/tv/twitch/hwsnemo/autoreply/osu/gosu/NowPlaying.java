@@ -3,18 +3,19 @@ package tv.twitch.hwsnemo.autoreply.osu.gosu;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import tv.twitch.hwsnemo.autoreply.osu.JsonTool;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 
 public class NowPlaying {
-	private final int id;
-	private final int set;
-	private final String artist;
-	private final String title;
-	private final String mapper;
-	private final String difficulty;
-	private final int minBPM;
-	private final int maxBPM;
-	private final float fullSR;
+	private int id;
+	private int set;
+	private String artist;
+	private String title;
+	private String mapper;
+	private String difficulty;
+	private int minBPM;
+	private int maxBPM;
+	private float fullSR;
 
 	private NowPlaying(int id, int set, String artist, String title, String mapper, String difficulty, int minBPM,
 			int maxBPM, float fullSR) {
@@ -27,6 +28,10 @@ public class NowPlaying {
 		this.minBPM = minBPM;
 		this.maxBPM = maxBPM;
 		this.fullSR = fullSR;
+	}
+
+	private NowPlaying() {
+
 	}
 
 	public int getId() {
@@ -65,7 +70,7 @@ public class NowPlaying {
 		return fullSR;
 	}
 
-	public static NowPlaying get() throws Exception {
+	public static NowPlaying oldget() throws Exception {
 		JsonParser jp = GosuParser.get();
 		JsonToken tk = jp.nextValue();
 
@@ -135,14 +140,71 @@ public class NowPlaying {
 			}
 			tk = jp.nextValue();
 		}
-
-		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null || difficulty == null
-				|| fullSR < 0) {
+		
+		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null
+				|| difficulty == null || fullSR < 0) {
 			throw new SendableException("Failed to get current song.",
-					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f", id,
-							set, artist, title, mapper, difficulty, fullSR));
+					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f",
+							id, set, artist, title, mapper, difficulty, fullSR));
 		}
 
 		return new NowPlaying(id, set, artist, title, mapper, difficulty, minBPM, maxBPM, fullSR);
+	}
+
+	public static NowPlaying get() throws Exception {
+		JsonParser jp = GosuParser.get();
+		NowPlaying now = new NowPlaying();
+		JsonTool jt = new JsonTool(jp);
+
+		jt.loopUntilEnd(() -> {
+			if (jt.isObjectStart("menu")) {
+				jt.loopInObject("menu", () -> {
+					if (jt.isObjectStart("bm")) {
+						jt.loopInObject("bm", () -> {
+							if (jt.equalName("id")) {
+								now.id = jt.getInt();
+							} else if (jt.equalName("set")) {
+								now.set = jt.getInt();
+							} else if (jt.isObjectStart("metadata")) {
+								jt.loopInObject("metadata", () -> {
+									if (jt.equalName("artist")) {
+										now.artist = jt.getText();
+									} else if (jt.equalName("title")) {
+										now.title = jt.getText();
+									} else if (jt.equalName("mapper")) {
+										now.mapper = jt.getText();
+									} else if (jt.equalName("difficulty")) {
+										now.difficulty = jt.getText();
+									}
+								});
+							} else if (jt.isObjectStart("stats")) {
+								jt.loopInObject("stats", () -> {
+									if (jt.isObjectStart("BPM")) {
+										jt.loopInObject("BPM", () -> {
+											if (jt.equalName("min")) {
+												now.minBPM = jt.getInt();
+											} else if (jt.equalName("max")) {
+												now.maxBPM = jt.getInt();
+											}
+										});
+									} else if (jt.equalName("fullSR")) {
+										now.fullSR = jt.getFloat();
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+
+		if ((now.id < 0 || now.set < 0) || now.artist == null || now.title == null || now.mapper == null
+				|| now.difficulty == null || now.fullSR < 0) {
+			throw new SendableException("Failed to get current song.",
+					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f",
+							now.id, now.set, now.artist, now.title, now.mapper, now.difficulty, now.fullSR));
+		}
+
+		return now;
 	}
 }
