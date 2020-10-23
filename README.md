@@ -80,7 +80,7 @@ Note that this command follows the running system's timezone.
 `!countdown` / `!cd` :
 Displays countdown.
 
-### Fun commands
+### Miscellaneous commands
 
 `!roll` :
 **[VIP]** You can add number at the end to roll a number between 1 and that number. Default is 100.
