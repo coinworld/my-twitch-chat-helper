@@ -70,7 +70,7 @@ Just basic info.
 `!score` :
 Displays score.
 
-### Countdown commands
+### Time commands
 
 Note that this command follows the running system's timezone.
 
