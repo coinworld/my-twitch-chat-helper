@@ -3,23 +3,23 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 import java.util.Calendar;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 
 public class TimeCmd implements Cmd {
 
 	public TimeCmd() throws NotEnabledException {
-		Check.throwOr("enabletimecmd");
+		Main.throwOr("enabletimecmd");
 	}
 
 	private boolean timeset = false;
 	private long eventtime;
 
 	@Override
-	public boolean go(MsgInfo inf) {
+	public boolean go(CmdInfo inf) {
 		if (inf.chkPut(CmdLevel.MOD, "!setcountdown")) {
 			if (inf.getArg() != null) {
 				String[] time = inf.getArg().split(":", 2);

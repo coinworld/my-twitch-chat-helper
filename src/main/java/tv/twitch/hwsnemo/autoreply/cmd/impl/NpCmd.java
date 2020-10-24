@@ -1,22 +1,22 @@
 package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
 public class NpCmd implements Cmd {
 
 	public NpCmd() throws NotEnabledException {
-		Check.throwOr("enablenpcmd");
+		Main.throwOr("enablenpcmd");
 	}
 
 	@Override
-	public boolean go(MsgInfo inf) {
+	public boolean go(CmdInfo inf) {
 		if (inf.chkPut(CmdLevel.NORMAL, "!np", "!nowplaying", "!map", "!song")) {
 			NowPlaying np;
 			try {

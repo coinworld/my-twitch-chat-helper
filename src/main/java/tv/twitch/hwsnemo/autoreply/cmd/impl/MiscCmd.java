@@ -3,20 +3,20 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 import java.util.Random;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 
 public class MiscCmd implements Cmd {
 
 	public MiscCmd() throws NotEnabledException {
-		Check.throwOr("enablemisccmd");
+		Main.throwOr("enablemisccmd");
 	}
 
 	@Override
-	public boolean go(MsgInfo inf) {
+	public boolean go(CmdInfo inf) {
 		if (inf.chkPut(CmdLevel.VIP, "!roll")) {
 			int num = 100;
 			if (inf.getArg() != null) {

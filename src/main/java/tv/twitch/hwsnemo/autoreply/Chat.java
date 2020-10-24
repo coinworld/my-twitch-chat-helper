@@ -13,9 +13,8 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
@@ -33,7 +32,7 @@ public class Chat {
 			Main.revert();
 
 			if (Main.getConfig().containsKey("cmdcooldown")) {
-				Check.setCooldown(Long.parseLong(Main.getConfig().get("cmdcooldown")));
+				CmdInfo.setCooldown(Long.parseLong(Main.getConfig().get("cmdcooldown")));
 			}
 
 			Main.write("Connected. Ctrl+C to exit.");
@@ -75,7 +74,7 @@ public class Chat {
 			if (msg.startsWith("!")) {
 				Main.write(event.getUser().getLogin() + "> " + msg);
 				String[] sp = msg.split(" ", 2);
-				MsgInfo inf = new MsgInfo(sp, event);
+				CmdInfo inf = new CmdInfo(sp, event);
 				for (Cmd cmd : cmds) {
 					if (cmd.go(inf)) {
 						break;

@@ -3,11 +3,11 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 import java.util.List;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.osu.InstantMatch;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
@@ -18,7 +18,7 @@ import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 public class MatchCmd implements Cmd {
 
 	public MatchCmd() throws NotEnabledException {
-		Check.throwOr("enablematchcmd");
+		Main.throwOr("enablematchcmd");
 	}
 
 	private interface AutoRun<T extends Result> {
@@ -109,7 +109,7 @@ public class MatchCmd implements Cmd {
 	}
 
 	@Override
-	public boolean go(MsgInfo inf) {
+	public boolean go(CmdInfo inf) {
 		if (inf.chkPut(CmdLevel.MOD, "!start")) {
 			if (!ongoing) {
 				if (inf.getArg() != null) {

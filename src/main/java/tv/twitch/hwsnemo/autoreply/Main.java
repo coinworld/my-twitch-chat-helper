@@ -126,4 +126,10 @@ public class Main {
 		write("\033[93;1m" + m + "\033[0m");
 	}
 
+	public static void throwOr(String key) throws NotEnabledException {
+		if (!isYes(key)) {
+			throw new NotEnabledException();
+		}
+	}
+
 }

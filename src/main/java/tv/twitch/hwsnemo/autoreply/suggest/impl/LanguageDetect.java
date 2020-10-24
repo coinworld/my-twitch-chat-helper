@@ -14,8 +14,8 @@ import com.optimaize.langdetect.text.TextObject;
 import com.optimaize.langdetect.text.TextObjectFactory;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
-import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
@@ -49,7 +49,7 @@ public class LanguageDetect implements Suggest {
 	private static TextObjectFactory fac = CommonTextObjectFactories.forDetectingOnLargeText();
 
 	public LanguageDetect() throws NotEnabledException {
-		Check.throwOr("enablelangdetect");
+		Main.throwOr("enablelangdetect");
 
 		try {
 			lp = new LanguageProfileReader().readAllBuiltIn();
