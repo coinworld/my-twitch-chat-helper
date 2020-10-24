@@ -200,6 +200,9 @@ public class MatchCmd implements Cmd {
 				Chat.send("Match is not over yet.");
 			}
 		} else if (inf.chkPut(CmdLevel.MOD, "!setinfo")) {
+			if (inf.getArg() == null)
+				return true;
+			
 			desc = inf.getArg();
 			Chat.send("Info is now set.");
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!score")) {
