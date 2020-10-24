@@ -2,13 +2,12 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.List;
 
-import org.pircbotx.hooks.events.MessageEvent;
-
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
+import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
 import tv.twitch.hwsnemo.autoreply.osu.InstantMatch;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
@@ -110,11 +109,11 @@ public class MatchCmd implements Cmd {
 	}
 
 	@Override
-	public boolean go(String[] sp, MessageEvent event) {
-		if (Check.andPut(sp[0], event, CmdLevel.MOD, "!start")) {
+	public boolean go(MsgInfo inf) {
+		if (inf.chkPut(CmdLevel.MOD, "!start")) {
 			if (!ongoing) {
-				if (sp.length != 1) {
-					String[] args = sp[1].split(" ");
+				if (inf.getArg() != null) {
+					String[] args = inf.getArg().split(" ");
 
 					int mpid = -1;
 					boolean isteam = false;
@@ -200,21 +199,21 @@ public class MatchCmd implements Cmd {
 			} else {
 				Chat.send("Match is not over yet.");
 			}
-		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!setinfo")) {
-			desc = sp[1];
+		} else if (inf.chkPut(CmdLevel.MOD, "!setinfo")) {
+			desc = inf.getArg();
 			Chat.send("Info is now set.");
-		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!score")) {
+		} else if (inf.chkPut(CmdLevel.NORMAL, "!score")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send(getScore() + (desc != null ? (" / " + desc) : ""));
-		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!win")) {
+		} else if (inf.chkPut(CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
 
 			int n = 1;
-			if (sp.length != 1) {
-				String sc = sp[1].toLowerCase();
+			if (inf.getArg() != null) {
+				String sc = inf.getArg().toLowerCase();
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
 					oursetscore += n;
@@ -229,13 +228,13 @@ public class MatchCmd implements Cmd {
 				win();
 			}
 			Chat.send("PogChamp " + getScore());
-		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!lose")) {
+		} else if (inf.chkPut(CmdLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
 
 			int n = 1;
-			if (sp.length != 1) {
-				String sc = sp[1].toLowerCase();
+			if (inf.getArg() != null) {
+				String sc = inf.getArg().toLowerCase();
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
 					oppsetscore += n;
@@ -250,24 +249,24 @@ public class MatchCmd implements Cmd {
 				lose();
 			}
 			Chat.send("Sadge " + getScore());
-		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!over")) {
+		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
 			if (!ongoing)
 				return true;
 
 			Chat.send("Match is over / " + getScore());
 			reset();
-		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!mp")) {
+		} else if (inf.chkPut(CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
 
 			if (mp >= 0) {
 				Chat.send("https://osu.ppy.sh/mp/" + mp);
 			}
-		} else if (Check.andPut(sp[0], event, CmdLevel.MOD, "!reset")) {
+		} else if (inf.chkPut(CmdLevel.MOD, "!reset")) {
 			if (!ongoing)
 				return true;
 
-			if (sp.length != 1 && sp[1].equalsIgnoreCase("all")) {
+			if (inf.getArg() != null && inf.getArg().equalsIgnoreCase("all")) {
 				oursetscore = 0;
 				oppsetscore = 0;
 			}

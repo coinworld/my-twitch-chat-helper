@@ -140,12 +140,12 @@ public class NowPlaying {
 			}
 			tk = jp.nextValue();
 		}
-		
-		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null
-				|| difficulty == null || fullSR < 0) {
+
+		if ((id < 0 || set < 0) || artist == null || title == null || mapper == null || difficulty == null
+				|| fullSR < 0) {
 			throw new SendableException("Failed to get current song.",
-					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f",
-							id, set, artist, title, mapper, difficulty, fullSR));
+					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f", id,
+							set, artist, title, mapper, difficulty, fullSR));
 		}
 
 		return new NowPlaying(id, set, artist, title, mapper, difficulty, minBPM, maxBPM, fullSR);
@@ -161,23 +161,22 @@ public class NowPlaying {
 				jt.loopInObject("menu", () -> {
 					if (jt.isObjectStart("bm")) {
 						jt.loopInObject("bm", () -> {
-							if (jt.equalName("id")) {
+							if (jt.equalName("id"))
 								now.id = jt.getInt();
-							} else if (jt.equalName("set")) {
+							else if (jt.equalName("set"))
 								now.set = jt.getInt();
-							} else if (jt.isObjectStart("metadata")) {
+							else if (jt.isObjectStart("metadata"))
 								jt.loopInObject("metadata", () -> {
-									if (jt.equalName("artist")) {
+									if (jt.equalName("artist"))
 										now.artist = jt.getText();
-									} else if (jt.equalName("title")) {
+									else if (jt.equalName("title"))
 										now.title = jt.getText();
-									} else if (jt.equalName("mapper")) {
+									else if (jt.equalName("mapper"))
 										now.mapper = jt.getText();
-									} else if (jt.equalName("difficulty")) {
+									else if (jt.equalName("difficulty"))
 										now.difficulty = jt.getText();
-									}
 								});
-							} else if (jt.isObjectStart("stats")) {
+							else if (jt.isObjectStart("stats"))
 								jt.loopInObject("stats", () -> {
 									if (jt.isObjectStart("BPM")) {
 										jt.loopInObject("BPM", () -> {
@@ -191,7 +190,6 @@ public class NowPlaying {
 										now.fullSR = jt.getFloat();
 									}
 								});
-							}
 						});
 					}
 				});

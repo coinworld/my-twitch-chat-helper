@@ -16,42 +16,30 @@ public class JsonTool {
 	public static interface ThrowableRunnable {
 		public void run() throws Exception;
 	}
-	
+
 	public boolean isNull() {
 		return tk == JsonToken.VALUE_NULL;
 	}
 
 	public boolean isObjectStart(String name) {
-		try {
-			boolean na = (name == null) ? jp.getCurrentName() == null : name.equals(jp.getCurrentName());
-			return tk == JsonToken.START_OBJECT && na;
-		} catch (IOException e) {
-			return false;
-		}
+		return tk == JsonToken.START_OBJECT && equalName(name);
 	}
 
 	public void loopInObject(String name, ThrowableRunnable run) throws Exception {
 		tk = jp.nextValue();
-		while (!(tk == JsonToken.END_OBJECT
-				&& ((name == null) ? jp.getCurrentName() == null : name.equals(jp.getCurrentName())))) {
+		while (!(tk == JsonToken.END_OBJECT && equalName(name))) {
 			run.run();
 			tk = jp.nextValue();
 		}
 	}
 
 	public boolean isArrayStart(String name) {
-		try {
-			boolean na = (name == null) ? jp.getCurrentName() == null : name.equals(jp.getCurrentName());
-			return tk == JsonToken.START_ARRAY && na;
-		} catch (Exception e) {
-			return false;
-		}
+		return tk == JsonToken.START_ARRAY && equalName(name);
 	}
 
 	public void loopInArray(String name, ThrowableRunnable run) throws Exception {
 		tk = jp.nextValue();
-		while (!(tk == JsonToken.END_ARRAY
-				&& ((name == null) ? jp.getCurrentName() == null : name.equals(jp.getCurrentName())))) {
+		while (!(tk == JsonToken.END_ARRAY && equalName(name))) {
 			run.run();
 			tk = jp.nextValue();
 		}
@@ -71,7 +59,7 @@ public class JsonTool {
 
 	public boolean equalName(String name) {
 		try {
-			return name.equals(jp.getCurrentName());
+			return (name == null) ? jp.getCurrentName() == null : name.equals(jp.getCurrentName());
 		} catch (IOException e) {
 			return false;
 		}

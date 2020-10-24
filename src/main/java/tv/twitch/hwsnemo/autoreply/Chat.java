@@ -15,6 +15,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
+import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
@@ -74,8 +75,9 @@ public class Chat {
 			if (msg.startsWith("!")) {
 				Main.write(event.getUser().getLogin() + "> " + msg);
 				String[] sp = msg.split(" ", 2);
+				MsgInfo inf = new MsgInfo(sp, event);
 				for (Cmd cmd : cmds) {
-					if (cmd.go(sp, event)) {
+					if (cmd.go(inf)) {
 						break;
 					}
 				}

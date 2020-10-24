@@ -2,13 +2,12 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Random;
 
-import org.pircbotx.hooks.events.MessageEvent;
-
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
+import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
 
 public class MiscCmd implements Cmd {
 
@@ -17,11 +16,11 @@ public class MiscCmd implements Cmd {
 	}
 
 	@Override
-	public boolean go(String[] sp, MessageEvent event) {
-		if (Check.andPut(sp[0], event, CmdLevel.VIP, "!roll")) {
+	public boolean go(MsgInfo inf) {
+		if (inf.chkPut(CmdLevel.VIP, "!roll")) {
 			int num = 100;
-			if (sp.length != 1) {
-				num = Integer.parseInt(sp[1]);
+			if (inf.getArg() != null) {
+				num = Integer.parseInt(inf.getArg());
 			}
 
 			Random rnd = new Random();

@@ -35,12 +35,11 @@ public class InstantMatch {
 	public int getMP() {
 		return mp;
 	}
-	
+
 	private static class Game {
 		int game_id = -1;
 		int team_type = -1;
 		boolean end = false;
-
 
 		@Override
 		public boolean equals(Object o) {
@@ -55,45 +54,41 @@ public class InstantMatch {
 
 	private static class Score {
 		int team;
-	
+
 		int score;
-	
+
 		int user_id;
-	
+
 		Score(int team, int score, int user_id) {
 			this.team = team;
 			this.score = score;
 			this.user_id = user_id;
 		}
-		
+
 		Score() {
-			
+
 		}
-	
+
 		int getScore() {
 			return score;
 		}
-	
+
 		int getTeam() {
 			return team;
 		}
-	
+
 		int getUser_id() {
 			return user_id;
 		}
 	}
-	
-	private class Lastgame {
-		int lastid;
-	}
-	
+
 	public List<Result> oldGetNow() throws Exception {
 		List<Result> res = new ArrayList<>();
 
 		JsonParser jp = OsuApi.request(FEAT, parm);
 		JsonToken tk = jp.nextValue();
 		int lastid = lastgame;
-		
+
 		while (tk != null) {
 			if (tk == JsonToken.START_OBJECT && "match".equals(jp.getCurrentName())) {
 				tk = jp.nextValue();
@@ -202,7 +197,7 @@ public class InstantMatch {
 			tk = jp.nextValue();
 		}
 		lastgame = lastid;
-		
+
 		return res;
 	}
 
@@ -210,20 +205,23 @@ public class InstantMatch {
 		List<Result> res = new ArrayList<>();
 
 		JsonParser jp = OsuApi.request(FEAT, parm);
+
+		class Lastgame {
+			int lastid;
+		}
 		Lastgame lg = new Lastgame();
 		lg.lastid = lastgame;
 
 		if (over) // the reason for 'over' is to check remaining games and throw an exception
 					// after giving the last scores.
 			throw new SendableException("This match is not active now.");
-		
+
 		JsonTool jt = new JsonTool(jp);
 		jt.loopUntilEnd(() -> {
 			if (jt.isObjectStart("match")) {
 				jt.loopInObject("match", () -> {
-					if (jt.equalName("end_time")) {
+					if (jt.equalName("end_time"))
 						over = !jt.isNull();
-					}
 				});
 			} else if (jt.isArrayStart("games")) {
 				jt.loopInArray("games", () -> {
@@ -231,28 +229,27 @@ public class InstantMatch {
 						Game game = new Game();
 						List<Score> scores = new ArrayList<>();
 						jt.loopInObject(null, () -> {
-							if (jt.isObjectStart(null)) {
+							if (jt.isObjectStart(null))
 								throw new SendableException("Data can't be parsed.");
-							} else if (jt.equalName("game_id")) {
+							else if (jt.equalName("game_id"))
 								game.game_id = jt.getInt();
-							} else if (jt.equalName("end_time") && !jt.isNull()) {
+							else if (jt.equalName("end_time") && !jt.isNull())
 								game.end = true;
-							} else if (jt.equalName("team_type")) {
+							else if (jt.equalName("team_type"))
 								game.team_type = jt.getInt();
-							} else if (jt.isArrayStart("scores")) {
+							else if (jt.isArrayStart("scores")) {
 								jt.loopInArray("scores", () -> {
 									if (jt.isObjectStart(null)) {
 										Score score = new Score();
 										jt.loopInObject(null, () -> {
-											if (jt.isObjectStart(null)) {
+											if (jt.isObjectStart(null))
 												throw new SendableException("Data can't be parsed.");
-											} else if (jt.equalName("team")) {
+											else if (jt.equalName("team"))
 												score.team = jt.getInt();
-											} else if (jt.equalName("score")) {
+											else if (jt.equalName("score"))
 												score.score = jt.getInt();
-											} else if (jt.equalName("user_id")) {
+											else if (jt.equalName("user_id"))
 												score.user_id = jt.getInt();
-											}
 										});
 										if (score.team >= 0 && score.score >= 0 && score.user_id >= 0)
 											scores.add(score);
@@ -260,7 +257,8 @@ public class InstantMatch {
 								});
 							}
 						});
-						if (game.end && game.game_id > lastgame && game.game_id >= 0 && game.team_type >= 0 && !scores.isEmpty()) {
+						if (game.end && game.game_id > lastgame && game.game_id >= 0 && game.team_type >= 0
+								&& !scores.isEmpty()) {
 							if (game.game_id > lg.lastid)
 								lg.lastid = game.game_id;
 							if (game.team_type == 0) { // head to head
@@ -287,11 +285,10 @@ public class InstantMatch {
 								int blue = -1;
 								int red = -1;
 								for (Score score : scores) {
-									if (score.team == 1) {
+									if (score.team == 1)
 										blue += score.score;
-									} else if (score.team == 2) {
+									else if (score.team == 2)
 										red += score.score;
-									}
 								}
 
 								if (blue >= 0 && red >= 0) {

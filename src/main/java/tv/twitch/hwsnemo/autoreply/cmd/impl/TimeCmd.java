@@ -2,13 +2,12 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Calendar;
 
-import org.pircbotx.hooks.events.MessageEvent;
-
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Check;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
+import tv.twitch.hwsnemo.autoreply.cmd.MsgInfo;
 
 public class TimeCmd implements Cmd {
 
@@ -20,10 +19,10 @@ public class TimeCmd implements Cmd {
 	private long eventtime;
 
 	@Override
-	public boolean go(String[] sp, MessageEvent event) {
-		if (Check.andPut(sp[0], event, CmdLevel.MOD, "!setcountdown")) {
-			if (sp.length != 1) {
-				String[] time = sp[1].split(":", 2);
+	public boolean go(MsgInfo inf) {
+		if (inf.chkPut(CmdLevel.MOD, "!setcountdown")) {
+			if (inf.getArg() != null) {
+				String[] time = inf.getArg().split(":", 2);
 				int hr = Integer.parseInt(time[0]);
 				int min = Integer.parseInt(time[1]);
 
@@ -44,7 +43,7 @@ public class TimeCmd implements Cmd {
 			} else {
 				Chat.send("Specify time.");
 			}
-		} else if (Check.andPut(sp[0], event, CmdLevel.NORMAL, "!cd", "!countdown")) {
+		} else if (inf.chkPut(CmdLevel.NORMAL, "!cd", "!countdown")) {
 			if (timeset) {
 				long diff = eventtime - System.currentTimeMillis();
 
