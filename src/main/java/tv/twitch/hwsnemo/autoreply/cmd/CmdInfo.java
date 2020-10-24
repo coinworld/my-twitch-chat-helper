@@ -31,6 +31,10 @@ public class CmdInfo {
 		return arg;
 	}
 	
+	public String getSender() {
+		return event.getUser().getNick();
+	}
+	
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
 	private static boolean checkPut(String input, MessageEvent event, CmdLevel lvl, String maincmd, String... cmd) {

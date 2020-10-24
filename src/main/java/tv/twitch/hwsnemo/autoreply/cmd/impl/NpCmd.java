@@ -11,8 +11,31 @@ import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
 public class NpCmd implements Cmd {
 
+	private static String format = "{artist} - {song} [{difficulty}] (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}";
+
+	public static void setFormat(String format) {
+		NpCmd.format = format;
+	}
+
+	private static String format(NowPlaying np) {
+		String bpm;
+		if (np.getMinBPM() == np.getMaxBPM()) {
+			bpm = np.getMinBPM() + "bpm";
+		} else {
+			bpm = "BPM: " + np.getMinBPM() + "-" + np.getMaxBPM();
+		}
+		return format.replace("{artist}", np.getArtist()).replace("{song}", np.getTitle())
+				.replace("{difficulty}", np.getDifficulty()).replace("{mapper}", np.getMapper())
+				.replace("{sr}", np.getFullSR() + "").replace("{bpm}", bpm).replace("{setid}", np.getSet() + "")
+				.replace("{beatmapid}", np.getId() + "");
+	}
+
 	public NpCmd() throws NotEnabledException {
 		Main.throwOr("enablenpcmd");
+		
+		if (Main.getConfig().containsKey("npformat")) {
+			setFormat(Main.getConfig().get("npformat"));
+		}
 	}
 
 	@Override
@@ -29,19 +52,7 @@ public class NpCmd implements Cmd {
 				return true;
 			}
 
-			StringBuilder sb = new StringBuilder(np.getArtist()).append(" - ").append(np.getTitle()).append(" [")
-					.append(np.getDifficulty()).append("] (by ").append(np.getMapper()).append(" | ")
-					.append(np.getFullSR()).append('*');
-			if (np.getMinBPM() > 0 && np.getMaxBPM() > 0) {
-				if (np.getMinBPM() == np.getMaxBPM()) {
-					sb.append(" | ").append(np.getMinBPM()).append("bpm");
-				} else {
-					sb.append(" | BPM: ").append(np.getMinBPM()).append('-').append(np.getMaxBPM());
-				}
-			}
-			sb.append(") osu.ppy.sh/s/").append(np.getSet());
-
-			Chat.send(sb.toString());
+			Chat.send(format(np));
 			return true;
 		}
 		return false;

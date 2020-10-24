@@ -28,12 +28,14 @@ public class Main {
 	private static PrintStream err;
 
 	private static Map<String, String> config = null;
+	
+	private static String confname = "config.txt";
 
 	public static Map<String, String> getConfig() {
 		if (config == null) {
 			Map<String, String> conf;
 			try {
-				conf = Collections.unmodifiableMap(ConfigFile.get("config.txt"));
+				conf = Collections.unmodifiableMap(ConfigFile.get(confname));
 				config = conf;
 			} catch (IOException e) {
 				write("Failed to load Config.");
@@ -52,6 +54,9 @@ public class Main {
 
 		reader = LineReaderBuilder.builder().build();
 		term = reader.getTerminal();
+		if (args.length != 0) {
+			confname = args[0];
+		}
 		getConfig();
 
 		if (RUN && config != null) {
