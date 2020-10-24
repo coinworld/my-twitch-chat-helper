@@ -13,6 +13,7 @@ defch #<channel to join>
 osuapi <your osu api key>
 chatprefix <prefix>
 cmdcooldown <duration in milliseconds, 1 sec = 1000>
+npformat <format>
 
 enablechatlog <yn>
 enablematchcmd <yn>
@@ -32,6 +33,8 @@ Every `<yn>` entries are either `yes` or anything else and not having them set j
 This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
 
 `chatprefix` and `cmdcooldown` has their default value ("" (no prefix) and 3000 respectively).
+
+Default of `npformat` is `{artist} - {song} [{difficulty}] (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
 
 ### predict.txt (example)
 ```
