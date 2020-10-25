@@ -89,6 +89,8 @@ Displays countdown.
 
 ### Gosumemory commands
 
+[You can download gosumemory here](https://github.com/l3lackshark/gosumemory)
+
 `!np` / `!nowplaying` :
 Displays the current song if gosumemory is available.
 
