@@ -95,10 +95,10 @@ Bot> Info is now set.
 Bot> big black | 1 - 2 | freedom dive / hello
 
 *freedom dive wins*
-Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive
+Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive / hello
 
 *big black wins*
-Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive
+Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive / hello
 
 !over
 Bot> Match is over / big black | 1 - 2 | freedom dive / hello
