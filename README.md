@@ -42,7 +42,7 @@ skin !skin @%s
 key !keys @%s
 ```
 
-If **skin** is included in someone's message, the bot will send `!skin @<his name>`
+If **skin** is included in someone's message, the bot will send `!skin @<his name>` if you type ~(without shift, looks similar to ') in the console.
 
 ---
 
