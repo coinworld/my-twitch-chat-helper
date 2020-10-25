@@ -95,19 +95,19 @@ Bot> Info is now set.
 Bot> big black | 1 - 2 | freedom dive / hello
 
 *freedom dive wins*
-Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive / hello
+Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive
 
 *big black wins*
-Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive / hello
+Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive
 
 !reset
-Bot> big black (0) | 0 - 0 | (1) freedom dive / hello
+Bot> big black (0) | 0 - 0 | (1) freedom dive
 
 !reset all
-Bot> big black | 0 - 0 | freedom dive / hello
+Bot> big black | 0 - 0 | freedom dive
 
 !over
-Bot> Match is over / big black | 0 - 0 | freedom dive / hello
+Bot> Match is over / big black | 0 - 0 | freedom dive
 ```
 
 ### Time commands
