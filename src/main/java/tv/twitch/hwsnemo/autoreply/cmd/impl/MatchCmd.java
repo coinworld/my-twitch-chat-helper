@@ -220,8 +220,7 @@ public class MatchCmd implements Cmd {
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
 					oursetscore += n;
-					ourscore = 0;
-					oppscore = 0;
+					resetScore();
 					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
@@ -241,8 +240,7 @@ public class MatchCmd implements Cmd {
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
 					oppsetscore += n;
-					ourscore = 0;
-					oppscore = 0;
+					resetScore();
 					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
@@ -270,18 +268,30 @@ public class MatchCmd implements Cmd {
 				return true;
 
 			if (inf.getArg() != null && inf.getArg().equalsIgnoreCase("all")) {
-				oursetscore = 0;
-				oppsetscore = 0;
+				resetScore(true);
 			}
 
-			ourscore = 0;
-			oppscore = 0;
+			resetScore();
 			Chat.send(getScore());
 		} else {
 			return false;
 		}
 
 		return true;
+	}
+	
+	private void resetScore(boolean set) {
+		if (set) {
+			oursetscore = 0;
+			oppsetscore = 0;
+		} else {
+			resetScore();
+		}
+	}
+	
+	private void resetScore() {
+		ourscore = 0;
+		oppscore = 0;
 	}
 
 	private void lose() {
