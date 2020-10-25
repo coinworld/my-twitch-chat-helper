@@ -100,8 +100,14 @@ Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive / hello
 *big black wins*
 Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive / hello
 
+!reset
+Bot> big black (0) | 0 - 0 | (1) freedom dive / hello
+
+!reset all
+Bot> big black | 0 - 0 | freedom dive / hello
+
 !over
-Bot> Match is over / big black | 1 - 2 | freedom dive / hello
+Bot> Match is over / big black | 0 - 0 | freedom dive / hello
 ```
 
 ### Time commands
