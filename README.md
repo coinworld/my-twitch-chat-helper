@@ -34,7 +34,7 @@ This bot doesn't distinguish big or small letters for keys so you can use `ChatP
 
 `chatprefix` and `cmdcooldown` has their default value ("" (no prefix) and 3000 respectively).
 
-Default of `npformat` is `{artist} - {song} [{difficulty}] (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
+Default of `npformat` is `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
 
 ### predict.txt (example)
 ```
