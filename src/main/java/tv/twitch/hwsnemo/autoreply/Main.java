@@ -77,7 +77,7 @@ public class Main {
 				}
 			}
 
-			if (oauth == null || osuapi == null || defch == null || twitchname == null) {
+			if (oauth == null || defch == null || twitchname == null) {
 				write("Please check the config file");
 				return;
 			}
