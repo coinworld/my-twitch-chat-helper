@@ -12,4 +12,6 @@ public class GosuParser {
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		return new JsonFactory().createParser(con.getInputStream());
 	}
+	// I know WebSocket is recommended but I only use gosumemory for NP for now, so I thought it would be
+	// inefficient to use in that way
 }
