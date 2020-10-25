@@ -56,7 +56,7 @@ There are some basic commands you can use right away. You can try to add some ne
 **[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). You can also use `set:<number of games>` to automatically reset score and update set score.
 
 `!start` :
-**[MODS]** Mods can add score with `!win` and `!lose` manually. These two commands also can be used when it's automaticaally tracked. `set:<score>` can be used and `!win 2` to add 2 score is also possible.
+**[MODS]** Mods can add score with `!win` and `!lose` manually. These two commands also can be used when it's automatically tracked. `set:<score>` can be used and `!win 2` to add 2 score is also possible.
 
 `!over` :
 **[MODS]** Tracking (and just basic use of `!start`) will be over if you use this command.
