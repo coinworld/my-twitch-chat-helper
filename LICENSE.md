@@ -1,4 +1,4 @@
-This bot is licensed as GNU GPL v3.
+This bot is licensed under GNU GPL v3.
 
 PircBotX, which I use in this bot, also uses GPL v3.
 
