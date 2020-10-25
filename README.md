@@ -72,6 +72,38 @@ Displays mp link if available.
 `!score` :
 Displays score with the info (if set).
 
+---
+
+_Use scenario because I know my english is bad_
+
+```
+!start mp:123456 player:big*black,freedom*dive set:3 - big black is 'me' and freedom dive is 'opponent'
+Bot> Now I track the match automatically.
+
+*in case the score is already 1-2*
+
+!win
+Bot> big black | 1 - 0 | freedom dive
+
+!lose 2
+Bot> big black | 1 - 2 | freedom dive
+
+!setinfo hello
+Bot> Info is now set.
+
+!score
+Bot> big black | 1 - 2 | freedom dive / hello
+
+*freedom dive wins*
+Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive
+
+*big black wins*
+Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive
+
+!over
+Bot> Match is over / big black | 1 - 2 | freedom dive / hello
+```
+
 ### Time commands
 
 Note that this command follows the running system's timezone.

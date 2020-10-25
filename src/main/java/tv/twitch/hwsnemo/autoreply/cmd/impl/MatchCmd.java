@@ -229,7 +229,7 @@ public class MatchCmd implements Cmd {
 			for (int i = 0; i < n; i++) {
 				win();
 			}
-			Chat.send("PogChamp " + getScore());
+			Chat.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
@@ -249,7 +249,7 @@ public class MatchCmd implements Cmd {
 			for (int i = 0; i < n; i++) {
 				lose();
 			}
-			Chat.send("Sadge " + getScore());
+			Chat.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
 			if (!ongoing)
 				return true;
