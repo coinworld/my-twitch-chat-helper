@@ -67,11 +67,11 @@ There are some basic commands you can use right away. You can try to add some ne
 `!mp` :
 Displays mp link if available.
 
-`!setinfo <message>` **[MODS]** / `!info` :
-Just basic info. 
+`!setinfo <message>` :
+**[MODS]** Set info. 
 
 `!score` :
-Displays score.
+Displays score with the info (if set).
 
 ### Time commands
 
