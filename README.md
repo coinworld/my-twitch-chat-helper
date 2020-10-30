@@ -129,7 +129,7 @@ Displays countdown.
 
 [You can download gosumemory here](https://github.com/l3lackshark/gosumemory)
 
-`!np` / `!nowplaying` :
+`!np` / `!nowplaying` / `!map` / `!song`:
 Displays the current song if gosumemory is available.
 
 ---
