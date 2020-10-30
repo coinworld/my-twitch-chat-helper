@@ -24,9 +24,9 @@ enablelinkdetect <yn>
 enablepredict <yn>
 ```
 
-You can get **oauth** here: https://twitchapps.com/tmi/
+You can get **oauth** here: https://twitchapps.com/tmi/ (for chat)
 
-for **osu! api**: https://osu.ppy.sh/p/api/
+for **osu! api**: https://osu.ppy.sh/p/api/ (for match tracking / Tracking calls API every three seconds)
 
 Every `<yn>` entries are either `yes` or anything else and not having them set just enables them (Basically `oauth`, `twichname`, `defch` is the only necessary. osu! api key is not needed if you are not using features like match tracking).
 This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
