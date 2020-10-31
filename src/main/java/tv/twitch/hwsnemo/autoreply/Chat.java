@@ -55,13 +55,13 @@ public class Chat {
 							act = null;
 							Main.write("Action done.");
 						}
-					} else if (!c.isEmpty()) {
-						bot.sendIRC().message(Chat.getDefCh(), c);
-						Main.write("* " + Chat.getName() + ": " + c);
 					} else if (c.startsWith("!")) {
 						String[] sp = c.split(" ", 2);
 						CmdInfo ci = new ConsoleCmdInfo(sp);
 						loopCmd(ci);
+					} else if (!c.isEmpty()) {
+						bot.sendIRC().message(Chat.getDefCh(), c);
+						Main.write("* " + Chat.getName() + ": " + c);
 					}
 				} catch (UserInterruptException e) {
 					break;
@@ -72,7 +72,7 @@ public class Chat {
 			bot.stopBotReconnect();
 			bot.close();
 		}
-		
+
 		private void loopCmd(CmdInfo inf) {
 			for (Cmd cmd : cmds) {
 				if (cmd.go(inf)) {
