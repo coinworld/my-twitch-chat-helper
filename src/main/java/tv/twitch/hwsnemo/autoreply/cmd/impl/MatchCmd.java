@@ -6,8 +6,8 @@ import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.InstantMatch;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
@@ -173,7 +173,7 @@ public class MatchCmd implements Cmd {
 									throw new Exception();
 								}
 							} catch (Exception e) {
-								Chat.send("Wrong username.");
+								inf.send("Wrong username.");
 								e.printStackTrace();
 								return true;
 							}
@@ -190,26 +190,26 @@ public class MatchCmd implements Cmd {
 							}, H2H.class).start();
 						}
 					} else {
-						Chat.send("Now mods can add score by !win or !lose, but check if you have made some typo.");
+						inf.send("Now mods can add score by !win or !lose, but check if you have made some typo.");
 					}
 				} else {
 					ongoing = true;
-					Chat.send("Now mods can add score by !win or !lose");
+					inf.send("Now mods can add score by !win or !lose");
 				}
 			} else {
-				Chat.send("Match is not over yet.");
+				inf.send("Match is not over yet.");
 			}
 		} else if (inf.chkPut(CmdLevel.MOD, "!setinfo")) {
 			if (inf.getArg() == null)
 				return true;
 			
 			desc = inf.getArg();
-			Chat.send("Info is now set.");
+			inf.send("Info is now set.");
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!score")) {
 			if (!ongoing)
 				return true;
 
-			Chat.send(getScore() + (desc != null ? (" / " + desc) : ""));
+			inf.send(getScore() + (desc != null ? (" / " + desc) : ""));
 		} else if (inf.chkPut(CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
@@ -229,7 +229,7 @@ public class MatchCmd implements Cmd {
 			for (int i = 0; i < n; i++) {
 				win();
 			}
-			Chat.send(getScore());
+			inf.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
@@ -249,19 +249,19 @@ public class MatchCmd implements Cmd {
 			for (int i = 0; i < n; i++) {
 				lose();
 			}
-			Chat.send(getScore());
+			inf.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
 			if (!ongoing)
 				return true;
 
-			Chat.send("Match is over / " + getScore());
+			inf.send("Match is over / " + getScore());
 			reset();
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
 
 			if (mp >= 0) {
-				Chat.send("https://osu.ppy.sh/mp/" + mp);
+				inf.send("https://osu.ppy.sh/mp/" + mp);
 			}
 		} else if (inf.chkPut(CmdLevel.MOD, "!reset")) {
 			if (!ongoing)
@@ -272,7 +272,7 @@ public class MatchCmd implements Cmd {
 			}
 
 			resetScore();
-			Chat.send(getScore());
+			inf.send(getScore());
 		} else {
 			return false;
 		}

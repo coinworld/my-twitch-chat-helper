@@ -2,12 +2,11 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Calendar;
 
-import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class TimeCmd implements Cmd {
 
@@ -39,16 +38,16 @@ public class TimeCmd implements Cmd {
 				eventtime = cal.getTimeInMillis();
 				timeset = true;
 
-				Chat.send("Time is set.");
+				inf.send("Time is set.");
 			} else {
-				Chat.send("Specify time.");
+				inf.send("Specify time.");
 			}
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!cd", "!countdown")) {
 			if (timeset) {
 				long diff = eventtime - System.currentTimeMillis();
 
 				if (diff <= 0) {
-					Chat.send("Event is over or has already started.");
+					inf.send("Event is over or has already started.");
 					return true;
 				}
 
@@ -63,9 +62,9 @@ public class TimeCmd implements Cmd {
 
 				m += diffmin + " min(s)";
 
-				Chat.send(m);
+				inf.send(m);
 			} else {
-				Chat.send("Time is not set.");
+				inf.send("Time is not set.");
 			}
 		} else {
 			return false;

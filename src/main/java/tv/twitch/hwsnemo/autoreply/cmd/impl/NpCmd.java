@@ -1,11 +1,10 @@
 package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
-import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
@@ -48,14 +47,14 @@ public class NpCmd implements Cmd {
 			try {
 				np = NowPlaying.get();
 			} catch (SendableException e) {
-				Chat.send(e.getMessage());
+				inf.send(e.getMessage());
 				return true;
 			} catch (Exception e) {
-				Chat.send("An unknown exception occurred.");
+				inf.send("An unknown exception occurred.");
 				return true;
 			}
 
-			Chat.send(format(np));
+			inf.send(format(np));
 			return true;
 		}
 		return false;

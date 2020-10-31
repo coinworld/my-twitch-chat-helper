@@ -13,8 +13,10 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ConnectEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
+import tv.twitch.hwsnemo.autoreply.cmd.ChatCmdInfo;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.ConsoleCmdInfo;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
 
@@ -32,7 +34,7 @@ public class Chat {
 			Main.revert();
 
 			if (Main.getConfig().containsKey("cmdcooldown")) {
-				CmdInfo.setCooldown(Long.parseLong(Main.getConfig().get("cmdcooldown")));
+				ChatCmdInfo.setCooldown(Long.parseLong(Main.getConfig().get("cmdcooldown")));
 			}
 
 			Main.write("Connected. Ctrl+C to exit.");
@@ -56,6 +58,10 @@ public class Chat {
 					} else if (!c.isEmpty()) {
 						bot.sendIRC().message(Chat.getDefCh(), c);
 						Main.write("* " + Chat.getName() + ": " + c);
+					} else if (c.startsWith("!")) {
+						String[] sp = c.split(" ", 2);
+						CmdInfo ci = new ConsoleCmdInfo(sp);
+						loopCmd(ci);
 					}
 				} catch (UserInterruptException e) {
 					break;
@@ -66,6 +72,14 @@ public class Chat {
 			bot.stopBotReconnect();
 			bot.close();
 		}
+		
+		private void loopCmd(CmdInfo inf) {
+			for (Cmd cmd : cmds) {
+				if (cmd.go(inf)) {
+					break;
+				}
+			}
+		}
 
 		@Override
 		public void onMessage(MessageEvent event) throws Exception {
@@ -74,12 +88,8 @@ public class Chat {
 			if (msg.startsWith("!")) {
 				Main.write(event.getUser().getLogin() + "> " + msg);
 				String[] sp = msg.split(" ", 2);
-				CmdInfo inf = new CmdInfo(sp, event);
-				for (Cmd cmd : cmds) {
-					if (cmd.go(inf)) {
-						break;
-					}
-				}
+				CmdInfo inf = new ChatCmdInfo(sp, event);
+				loopCmd(inf);
 			} else {
 				for (Suggest entry : sugg) {
 					SuggestAction sa = entry.hit(event.getUser().getLogin(), msg);

@@ -2,12 +2,11 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Random;
 
-import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class MiscCmd implements Cmd {
 
@@ -26,7 +25,7 @@ public class MiscCmd implements Cmd {
 			Random rnd = new Random();
 			int res = rnd.nextInt(num) + 1;
 
-			Chat.send("You got " + res + " peepoGlad");
+			inf.send("You got " + res + " peepoGlad");
 			return true;
 		}
 		return false;
