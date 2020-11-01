@@ -61,8 +61,8 @@ There are some basic commands you can use right away. You can try to add some ne
 
 Additional Options:
 - `set:<number of games>` to automatically reset score and update set score.
-- `nowarmup`: By default, this bot ignores every match held before `!start`. You can use this option to disable that and the bot will get every match before.
-- `autoname`: Only for team matches. If the match title is like `some name: (TeamRed) VS (TeamBlue)` and you use this option, the bot will automatically apply team names.
+- `nowarmup`: By default, this bot ignores every game held before `!start`. You can use this option to disable that and the bot will get every game before.
+- `autoname`: Can only be used with team option. If the match title is like `some name: (TeamRed) VS (TeamBlue)` and you use this option, the bot will automatically apply team names.
 
 
 `!start` :
