@@ -46,7 +46,7 @@ public class JsonTool {
 	}
 
 	public void loopUntilEnd(ThrowableRunnable run) throws Exception {
-		//tk = jp.nextValue();
+		tk = jp.nextValue();
 		while (tk != null) {
 			run.run();
 			tk = jp.nextValue();
