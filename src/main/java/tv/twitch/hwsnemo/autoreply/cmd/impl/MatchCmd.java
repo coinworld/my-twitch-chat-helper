@@ -125,7 +125,7 @@ public class MatchCmd implements Cmd {
 	}
 	
 	private static String getScoreFormat(String format) {
-		return format.replace("{artist}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
+		return format.replace("{ourname}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
 				.replace("{oppname}", "%4$s").replace("{oursetscore}", "%5$d").replace("{oppsetscore}", "%6$d");
 	}
 
