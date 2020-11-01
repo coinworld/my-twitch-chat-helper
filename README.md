@@ -138,6 +138,8 @@ This bot has an interactive shell.
 
 
 
-It displays chat and if there is a message which needs a specific action, the message will be shown in **bright yellow color** with the reason after |
+It displays chat and you just can chat with it.
+
+If there is a message which needs a specific action, the message will be shown in **bright yellow color** with the reason after |
 
 You can let the bot take an appropriate action by typing `
