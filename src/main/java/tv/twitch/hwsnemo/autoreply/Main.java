@@ -11,11 +11,13 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 
+import tv.twitch.hwsnemo.autoreply.osu.Match;
+import tv.twitch.hwsnemo.autoreply.osu.Match.Names;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 
 public class Main {
 
-	public static final boolean RUN = true;
+	public static final boolean RUN = true; // debug stuff
 
 	private static LineReader reader;
 	private static Terminal term;
@@ -100,7 +102,6 @@ public class Main {
 			Chat.getBot().startBot();
 		} else {
 		}
-
 	}
 
 	public static String readLine() {

@@ -1,5 +1,7 @@
 package tv.twitch.hwsnemo.autoreply.osu;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
-public class InstantMatch {
+public class Match {
 
 	private int mp;
 	
@@ -23,12 +25,13 @@ public class InstantMatch {
 	private boolean over = false;
 
 	private boolean first = true;
-
-	public InstantMatch(int mp) throws Exception {
+	
+	public Match(int mp, boolean nowarmup) throws Exception {
 		this.mp = mp;
 		Map<String, String> p = new HashMap<>();
 		p.put("mp", mp + "");
 		this.parm = Collections.unmodifiableMap(p);
+		first = !nowarmup;
 	}
 
 	public int getMP() {
@@ -156,5 +159,76 @@ public class InstantMatch {
 		}
 		
 		return res;
+	}
+	
+	public static class Names {
+		private String red;
+		private String blue;
+		
+		public String red() {
+			return red;
+		}
+		
+		public String blue() {
+			return blue;
+		}
+		
+		private Names() {
+		}
+	}
+	
+	public Names getNames() {
+		class TempClass {
+			Names n;
+		}
+		TempClass t = new TempClass();
+		try {
+			JsonTool jt = new JsonTool(OsuApi.request(FEAT, parm));
+			jt.loopUntilEnd(() -> {
+				if (jt.isObjectStart("match")) {
+					jt.loopInObject("match", () -> {
+						if (jt.equalName("name")) {
+							t.n = getNamesFrom(jt.getText());
+						}
+					});
+				}
+			});
+		} catch (Exception e) {
+			return null;
+		}
+		return t.n;
+	}
+	
+	private static String loopinBracket(CharacterIterator it) {
+		StringBuilder sb = new StringBuilder();
+		while (it.current() != '(') {
+    		it.next();
+    	}
+    	it.next();
+    	while (it.current() != ')') {
+    		sb.append(it.current());
+    		it.next();
+    	}
+    	if (sb.length() == 0) {
+    		return null;
+    	}
+    	return sb.toString();
+	}
+	
+	private static Names getNamesFrom(String s) {
+		Names names = new Names();
+		CharacterIterator it = new StringCharacterIterator(s);
+		 
+        while (it.current() != CharacterIterator.DONE) {
+            if (it.current() == ':') {
+            	names.red = loopinBracket(it);
+            	names.blue = loopinBracket(it);
+            }
+            it.next();
+        }
+        if (names.red == null || names.blue == null) {
+        	return null;
+        }
+        return names;
 	}
 }

@@ -8,7 +8,8 @@ import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
-import tv.twitch.hwsnemo.autoreply.osu.InstantMatch;
+import tv.twitch.hwsnemo.autoreply.osu.Match;
+import tv.twitch.hwsnemo.autoreply.osu.Match.Names;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
@@ -19,6 +20,14 @@ public class MatchCmd implements Cmd {
 
 	public MatchCmd() throws NotEnabledException {
 		Main.throwOr("enablematchcmd");
+		
+		if (Main.getConfig().containsKey("scoreformat")) {
+			scoreformat = getScoreFormat(Main.getConfig().get("scoreformat"));
+		}
+		
+		if (Main.getConfig().containsKey("setscoreformat")) {
+			setformat = getScoreFormat(Main.getConfig().get("setscoreformat"));
+		}
 	}
 
 	private interface AutoRun<T extends Result> {
@@ -26,13 +35,12 @@ public class MatchCmd implements Cmd {
 	}
 
 	private class AutoThread<T extends Result> extends Thread {
-		private AutoThread(AutoRun<T> run, Class<T> clazz) {
+		private AutoThread(AutoRun<T> run, Class<T> clazz, int mpid, boolean nowarmup, Runnable reset, Match m) {
 			super(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
-						InstantMatch m = new InstantMatch(mp);
 						Chat.send("Now I track the match automatically.");
 						while (ongoing) {
 							List<Result> res = m.getNow();
@@ -53,7 +61,7 @@ public class MatchCmd implements Cmd {
 						Chat.send("An unknown exception occurred. Track is now disabled.");
 						e.printStackTrace();
 					}
-					reset();
+					reset.run();
 				}
 
 			});
@@ -85,6 +93,8 @@ public class MatchCmd implements Cmd {
 	private int set;
 
 	private boolean isblue;
+	
+	private Match m;
 
 	private void reset() {
 		ourname = "Our team";
@@ -96,16 +106,27 @@ public class MatchCmd implements Cmd {
 		desc = null;
 		ongoing = false;
 		isblue = true;
+		m = null;
 		mp = -1;
 		set = -1;
 	}
+	
+	private static String setformat = "%1$s (%5$d) | %2$d - %3$d | (%6$d) %4$s";
+	// {ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}
+	
+	private static String scoreformat = "%1$s | %2$d - %3$d | %4$s";
+	// {ourname} | {ourscore} - {oppscore} | {oppname}
 
 	private String getScore() {
-		if (oursetscore > 0 || oppsetscore > 0) {
-			return ourname + " (" + oursetscore + ") | " + ourscore + " - " + oppscore + " | (" + oppsetscore + ") "
-					+ oppname;
+		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
+			return String.format(setformat, ourname, oursetscore, ourscore, oppscore, oppsetscore, oppname);
 		}
-		return ourname + " | " + ourscore + " - " + oppscore + " | " + oppname;
+		return String.format(scoreformat, ourname, ourscore, oppscore, oppname);
+	}
+	
+	private static String getScoreFormat(String format) {
+		return format.replace("{artist}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
+				.replace("{oppname}", "%4$s").replace("{oursetscore}", "%5$d").replace("{oppsetscore}", "%6$d");
 	}
 
 	@Override
@@ -119,6 +140,8 @@ public class MatchCmd implements Cmd {
 					boolean isteam = false;
 					String ourpname = null;
 					String opppname = null;
+					boolean nowarmup = false;
+					boolean autoname = false;
 
 					for (String origarg : args) {
 						String arg = origarg.toLowerCase();
@@ -142,14 +165,37 @@ public class MatchCmd implements Cmd {
 							}
 						} else if (arg.startsWith("set:")) {
 							set = Integer.parseInt(arg.substring(4));
+						} else if (arg.equals("nowarmup")) {
+							nowarmup = true;
+						} else if (arg.equals("autoname")) {
+							autoname = true;
 						}
 					}
 
 					ongoing = true;
 
 					if (mpid >= 0) {
+						try {
+							m = new Match(mpid, nowarmup);
+						} catch (Exception e1) {
+							reset();
+							inf.send("Something is wrong with tracking");
+							return true;
+						}
 						this.mp = mpid;
 						if (isteam) {
+							if (autoname) {
+								Names names = m.getNames();
+								if (names != null) {
+									if (isblue) {
+										ourname = names.blue();
+										oppname = names.red();
+									} else {
+										ourname = names.red();
+										oppname = names.blue();
+									}
+								}
+							}
 							new AutoThread<TeamVS>(team -> {
 								if (team.blueWon()) {
 									if (isblue)
@@ -162,7 +208,7 @@ public class MatchCmd implements Cmd {
 									else
 										win();
 								}
-							}, TeamVS.class).start();
+							}, TeamVS.class, mp, nowarmup, this::reset, m).start();
 						} else {
 							int ourid;
 							int oppid;
@@ -187,7 +233,7 @@ public class MatchCmd implements Cmd {
 								} else if (h2h.getWinner() == oppid) {
 									lose();
 								}
-							}, H2H.class).start();
+							}, H2H.class, mpid, nowarmup, this::reset, m).start();
 						}
 					} else {
 						inf.send("Now mods can add score by !win or !lose, but check if you have made some typo.");
@@ -251,11 +297,8 @@ public class MatchCmd implements Cmd {
 			}
 			inf.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
-			if (!ongoing)
-				return true;
-
-			inf.send("Match is over / " + getScore());
 			reset();
+			inf.send("");
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
@@ -273,6 +316,20 @@ public class MatchCmd implements Cmd {
 
 			resetScore();
 			inf.send(getScore());
+		} else if (inf.chkPut(CmdLevel.MOD, "!setname")) {
+			if (inf.getArg() == null) {
+				return true;
+			}
+			String[] t = inf.getArg().split(",");
+			if (t.length != 2) {
+				inf.send("Wrong Name");
+				return true;
+			}
+			
+			ourname = t[0].replace('*', ' ');
+			oppname = t[1].replace('*', ' ');
+			
+			inf.send("Team names are set.");
 		} else {
 			return false;
 		}

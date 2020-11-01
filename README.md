@@ -14,6 +14,8 @@ osuapi <your osu api key>
 chatprefix <prefix>
 cmdcooldown <duration in milliseconds, 1 sec = 1000>
 npformat <format>
+scoreformat <format>
+setscoreformat <format>
 
 enablechatlog <yn>
 enablematchcmd <yn>
@@ -33,7 +35,10 @@ This bot doesn't distinguish big or small letters for keys so you can use `ChatP
 
 `chatprefix` and `cmdcooldown` has their default value ("" (no prefix) and 3000 respectively).
 
-Default of `npformat` is `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
+Default values:
+- `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
+- `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`
+- `setscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}`
 
 ### predict.txt (example)
 ```
@@ -52,7 +57,13 @@ There are some basic commands you can use right away. You can try to add some ne
 ### Match Commands
 
 `!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
-**[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). You can also use `set:<number of games>` to automatically reset score and update set score.
+**[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk).
+
+Additional Options:
+- `set:<number of games>` to automatically reset score and update set score.
+- `nowarmup`: By default, this bot ignores every match held before `!start`. You can use this option to disable that and the bot will get every match before.
+- `autoname`: Only for team matches. If the match title is like `some name: (TeamRed) VS (TeamBlue)` and you use this option, the bot will automatically apply team names.
+
 
 `!start` :
 **[MODS]** Mods can add score with `!win` and `!lose` manually. These two commands also can be used when it's automatically tracked. `set:<score>` can be used and `!win 2` to add 2 score is also possible.
@@ -71,6 +82,9 @@ Displays mp link if available.
 
 `!score` :
 Displays score with the info (if set).
+
+`!setname <me>,<opponent>` :
+**[MODS]** Sets name. You can also use '*' (to be replaced with ' ') here too.
 
 ---
 
