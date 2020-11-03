@@ -20,11 +20,11 @@ public class MatchCmd implements Cmd {
 
 	public MatchCmd() throws NotEnabledException {
 		Main.throwOr("enablematchcmd");
-		
+
 		if (Main.getConfig().containsKey("scoreformat")) {
 			scoreformat = getScoreFormat(Main.getConfig().get("scoreformat"));
 		}
-		
+
 		if (Main.getConfig().containsKey("setscoreformat")) {
 			setformat = getScoreFormat(Main.getConfig().get("setscoreformat"));
 		}
@@ -36,34 +36,29 @@ public class MatchCmd implements Cmd {
 
 	private static class AutoThread<T extends Result> extends Thread {
 		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc, Match m) {
-			super(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						Chat.send("Now I track the match automatically.");
-						while (mc.ongoing) {
-							List<Result> res = m.getNow();
-							if (!res.isEmpty()) {
-								for (Result r : res) {
-									if (r.isDraw())
-										continue;
-									if (clazz.isInstance(r))
-										run.go(clazz.cast(r));
-								}
-								Chat.send("Auto: " + mc.getScore());
+			super(() -> {
+				try {
+					Chat.send("Now I track the match automatically.");
+					while (mc.ongoing) {
+						List<Result> res = m.getNow();
+						if (!res.isEmpty()) {
+							for (Result r : res) {
+								if (r.isDraw())
+									continue;
+								if (clazz.isInstance(r))
+									run.go(clazz.cast(r));
 							}
-							Thread.sleep(3000L);
+							Chat.send("Auto: " + mc.getScore());
 						}
-					} catch (SendableException e) {
-						Chat.send("Track Aborted: " + e.getMessage());
-					} catch (Exception e) {
-						Chat.send("An unknown exception occurred. Track is now disabled.");
-						e.printStackTrace();
+						Thread.sleep(3000L);
 					}
-					mc.reset();
+				} catch (SendableException e) {
+					Chat.send("Track Aborted: " + e.getMessage());
+				} catch (Exception e) {
+					Chat.send("An unknown exception occurred. Track is now disabled.");
+					e.printStackTrace();
 				}
-
+				mc.reset();
 			});
 		}
 	}
@@ -93,7 +88,7 @@ public class MatchCmd implements Cmd {
 	private int set;
 
 	private boolean isblue;
-	
+
 	private Match m;
 
 	private void reset() {
@@ -110,10 +105,11 @@ public class MatchCmd implements Cmd {
 		mp = -1;
 		set = -1;
 	}
-	
+
 	private static String setformat = "%1$s (%5$d) | %2$d - %3$d | (%6$d) %4$s";
-	// {ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}
-	
+	// {ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})
+	// {oppname}
+
 	private static String scoreformat = "%1$s | %2$d - %3$d | %4$s";
 	// {ourname} | {ourscore} - {oppscore} | {oppname}
 
@@ -123,7 +119,7 @@ public class MatchCmd implements Cmd {
 		}
 		return String.format(scoreformat, ourname, ourscore, oppscore, oppname);
 	}
-	
+
 	private static String getScoreFormat(String format) {
 		return format.replace("{ourname}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
 				.replace("{oppname}", "%4$s").replace("{oursetscore}", "%5$d").replace("{oppsetscore}", "%6$d");
@@ -248,7 +244,7 @@ public class MatchCmd implements Cmd {
 		} else if (inf.chkPut(CmdLevel.MOD, "!setinfo")) {
 			if (inf.getArg() == null)
 				return true;
-			
+
 			desc = inf.getArg();
 			inf.send("Info is now set.");
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!score")) {
@@ -325,10 +321,10 @@ public class MatchCmd implements Cmd {
 				inf.send("Wrong Name");
 				return true;
 			}
-			
+
 			ourname = t[0].replace('*', ' ');
 			oppname = t[1].replace('*', ' ');
-			
+
 			inf.send("Team names are set.");
 		} else {
 			return false;
@@ -336,7 +332,7 @@ public class MatchCmd implements Cmd {
 
 		return true;
 	}
-	
+
 	private void resetScore(boolean set) {
 		if (set) {
 			oursetscore = 0;
@@ -345,7 +341,7 @@ public class MatchCmd implements Cmd {
 			resetScore();
 		}
 	}
-	
+
 	private void resetScore() {
 		ourscore = 0;
 		oppscore = 0;
