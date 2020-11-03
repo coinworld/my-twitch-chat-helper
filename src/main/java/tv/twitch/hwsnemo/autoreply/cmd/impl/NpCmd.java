@@ -12,8 +12,7 @@ public class NpCmd implements Cmd {
 
 	private static String format = "%1$s - %2$s [%3$s] +%9$s (by %4$s | %5$f* | %6$s) osu.ppy.sh/s/%7$d";
 
-	// "{artist} - {song} [{difficulty}] (by {mapper} | {sr}* | {bpm})
-	// osu.ppy.sh/s/{setid}" {beatmapid} - 8 {mods} - 9
+	// "{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}" {beatmapid} - 8
 
 	public static void setFormat(String format) {
 		NpCmd.format = format.replace("{artist}", "%1$s").replace("{song}", "%2$s").replace("{difficulty}", "%3$s")

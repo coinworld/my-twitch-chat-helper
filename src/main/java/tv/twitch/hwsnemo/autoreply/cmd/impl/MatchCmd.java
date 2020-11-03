@@ -30,19 +30,19 @@ public class MatchCmd implements Cmd {
 		}
 	}
 
-	private interface AutoRun<T extends Result> {
+	private static interface AutoRun<T extends Result> {
 		void go(T result);
 	}
 
-	private class AutoThread<T extends Result> extends Thread {
-		private AutoThread(AutoRun<T> run, Class<T> clazz, int mpid, boolean nowarmup, Runnable reset, Match m) {
+	private static class AutoThread<T extends Result> extends Thread {
+		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc, Match m) {
 			super(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
 						Chat.send("Now I track the match automatically.");
-						while (ongoing) {
+						while (mc.ongoing) {
 							List<Result> res = m.getNow();
 							if (!res.isEmpty()) {
 								for (Result r : res) {
@@ -51,7 +51,7 @@ public class MatchCmd implements Cmd {
 									if (clazz.isInstance(r))
 										run.go(clazz.cast(r));
 								}
-								Chat.send("Auto: " + getScore());
+								Chat.send("Auto: " + mc.getScore());
 							}
 							Thread.sleep(3000L);
 						}
@@ -61,7 +61,7 @@ public class MatchCmd implements Cmd {
 						Chat.send("An unknown exception occurred. Track is now disabled.");
 						e.printStackTrace();
 					}
-					reset.run();
+					mc.reset();
 				}
 
 			});
@@ -208,7 +208,7 @@ public class MatchCmd implements Cmd {
 									else
 										win();
 								}
-							}, TeamVS.class, mp, nowarmup, this::reset, m).start();
+							}, TeamVS.class, this, m).start();
 						} else {
 							int ourid;
 							int oppid;
@@ -233,7 +233,7 @@ public class MatchCmd implements Cmd {
 								} else if (h2h.getWinner() == oppid) {
 									lose();
 								}
-							}, H2H.class, mpid, nowarmup, this::reset, m).start();
+							}, H2H.class, this, m).start();
 						}
 					} else {
 						inf.send("Now mods can add score by !win or !lose, but check if you have made some typo.");

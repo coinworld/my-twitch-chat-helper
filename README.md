@@ -78,7 +78,7 @@ Additional Options:
 Displays mp link if available.
 
 `!setinfo <message>` :
-**[MODS]** Set info. 
+**[MODS]** Sets info. 
 
 `!score` :
 Displays score with the info (if set).
