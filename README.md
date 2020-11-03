@@ -57,7 +57,7 @@ There are some basic commands you can use right away. You can try to add some ne
 ### Match Commands
 
 `!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
-**[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). mp id is https://osu.ppy.sh/community/matches/numbers_here
+**[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). mp id is numbers after https://osu.ppy.sh/community/matches/
 
 Additional Options:
 - `set:<number of games>` to automatically reset score and update set score.
@@ -91,7 +91,7 @@ Displays score with the info (if set).
 _Use scenario because I know my english is bad_
 
 ```
-!start mp:123456 player:big*black,freedom*dive set:3 - big black is 'me' and freedom dive is 'opponent'
+!start mp:12345 player:big*black,freedom*dive set:3 - big black is 'me' and freedom dive is 'opponent'
 Bot> Now I track the match automatically.
 
 *in case the score is already 1-2*
