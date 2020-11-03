@@ -82,8 +82,6 @@ public class Main {
 				return;
 			}
 
-			write("Loaded the config successfully");
-
 			OsuApi.set(osuapi);
 
 			out = System.out;
