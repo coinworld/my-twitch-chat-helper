@@ -34,7 +34,7 @@ Every `<yn>` entries are either `yes` or anything else and not having them set j
 This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
 
 Default values:
-- `chatprefix`: "" (no prefix)
+- `chatprefix`: (no prefix)
 - `cmdcooldown`: 3000
 - `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
 - `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`

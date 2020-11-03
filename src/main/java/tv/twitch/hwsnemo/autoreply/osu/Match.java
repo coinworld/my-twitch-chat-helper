@@ -20,7 +20,7 @@ public class Match {
 
 	private int lastgame = 0;
 
-	private final String FEAT = "get_match";
+	private static final String FEAT = "get_match";
 
 	private boolean over = false;
 
