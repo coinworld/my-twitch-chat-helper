@@ -30,8 +30,8 @@ You can get **oauth** here: https://twitchapps.com/tmi/ (for chat)
 
 for **osu! api**: https://osu.ppy.sh/p/api/ (for match tracking / Tracking calls API every three seconds)
 
-Every `<yn>` entries are either `yes` or anything else and not having them set just enables them (Basically `oauth`, `twichname`, `defch` is the only necessary. osu! api key is not needed if you are not using features like match tracking).
-This bot doesn't distinguish big or small letters for keys so you can use `ChatPrefix` or so on to improve readability.
+Every `<yn>` entries are either `yes` or anything else and not having them set just enables them (Basically `oauth`, `twichname`, `defch` are the only necessary entries. osu! api key is not needed if you are not using features like match tracking).
+Keys (oauth, defch, ...) of the config are not case sensitive so you can use `ChatPrefix` or so on to improve readability.
 
 Default values:
 - `chatprefix`: (no prefix)
@@ -121,7 +121,7 @@ Bot> big black (0) | 0 - 0 | (1) freedom dive
 Bot> big black | 0 - 0 | freedom dive
 
 !over
-Bot> Match is over / big black | 0 - 0 | freedom dive
+Bot> Now that every information is gone, you can start again.
 ```
 
 ### Time commands
