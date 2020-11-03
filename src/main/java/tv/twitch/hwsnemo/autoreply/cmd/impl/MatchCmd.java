@@ -298,7 +298,7 @@ public class MatchCmd implements Cmd {
 			inf.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
 			reset();
-			inf.send("");
+			inf.send("Now that every information is gone, you can start again.");
 		} else if (inf.chkPut(CmdLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;

@@ -55,7 +55,7 @@ public class Match {
 
 		class Lastgame {
 			int lastid;
-		}
+		} // lambda workaround
 		Lastgame lg = new Lastgame();
 		lg.lastid = lastgame;
 
@@ -178,17 +178,21 @@ public class Match {
 	}
 	
 	public Names getNames() {
-		class TempClass {
-			Names n;
-		}
-		TempClass t = new TempClass();
+		Names names = new Names();
 		try {
 			JsonTool jt = new JsonTool(OsuApi.request(FEAT, parm));
 			jt.loopUntilEnd(() -> {
 				if (jt.isObjectStart("match")) {
 					jt.loopInObject("match", () -> {
 						if (jt.equalName("name")) {
-							t.n = getNamesFrom(jt.getText());
+							CharacterIterator it = new StringCharacterIterator(jt.getText());
+							while (it.current() != CharacterIterator.DONE) {
+					            if (it.current() == ':') {
+					            	names.red = loopinBracket(it);
+					            	names.blue = loopinBracket(it);
+					            }
+					            it.next();
+					        }
 						}
 					});
 				}
@@ -196,7 +200,10 @@ public class Match {
 		} catch (Exception e) {
 			return null;
 		}
-		return t.n;
+		if ((names.red == null || names.red.isEmpty()) || (names.blue == null || names.blue.isEmpty())) {
+        	return null;
+        }
+		return names;
 	}
 	
 	private static String loopinBracket(CharacterIterator it) {
@@ -213,22 +220,5 @@ public class Match {
     		return null;
     	}
     	return sb.toString();
-	}
-	
-	private static Names getNamesFrom(String s) {
-		Names names = new Names();
-		CharacterIterator it = new StringCharacterIterator(s);
-		 
-        while (it.current() != CharacterIterator.DONE) {
-            if (it.current() == ':') {
-            	names.red = loopinBracket(it);
-            	names.blue = loopinBracket(it);
-            }
-            it.next();
-        }
-        if (names.red == null || names.blue == null) {
-        	return null;
-        }
-        return names;
 	}
 }

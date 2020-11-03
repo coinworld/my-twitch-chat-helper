@@ -50,6 +50,7 @@ public class NpCmd implements Cmd {
 				inf.send(e.getMessage());
 				return true;
 			} catch (Exception e) {
+				Main.writeWarn("You must run gosumemory to use !np command. If it is running, please report this issue.");
 				inf.send("An unknown exception occurred.");
 				return true;
 			}

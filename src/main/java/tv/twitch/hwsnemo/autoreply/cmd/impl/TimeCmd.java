@@ -57,10 +57,10 @@ public class TimeCmd implements Cmd {
 				String m = "Time Left: ";
 
 				if (diffhr > 0) {
-					m += diffhr + " hour(s) ";
+					m += diffhr + "h ";
 				}
 
-				m += diffmin + " min(s)";
+				m += diffmin + "m";
 
 				inf.send(m);
 			} else {

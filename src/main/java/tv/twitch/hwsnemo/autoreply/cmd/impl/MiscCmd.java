@@ -25,7 +25,7 @@ public class MiscCmd implements Cmd {
 			Random rnd = new Random();
 			int res = rnd.nextInt(num) + 1;
 
-			inf.send("You got " + res + " peepoGlad");
+			inf.send(inf.getSender() + " got " + res);
 			return true;
 		}
 		return false;
