@@ -10,12 +10,14 @@ import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
 public class NpCmd implements Cmd {
 
-	private static String format = "%1$s - %2$s [%3$s] +%9$s (by %4$s | %5$.2f* | %6$s) %10$s";
-
-	// "{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}" {beatmapid} - 8
+	private static String format = getFormat("{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}");
 
 	public static void setFormat(String format) {
-		NpCmd.format = format.replace("{artist}", "%1$s").replace("{song}", "%2$s").replace("{difficulty}", "%3$s")
+		NpCmd.format = getFormat(format);
+	}
+	
+	private static String getFormat(String form) {
+		return form.replace("{artist}", "%1$s").replace("{song}", "%2$s").replace("{difficulty}", "%3$s")
 				.replace("{mapper}", "%4$s").replace("{sr}", "%5$.2f").replace("{bpm}", "%6$s").replace("{setid}", "%7$d")
 				.replace("{beatmapid}", "%8$d").replace("{mods}", "%9$s").replace("{url}", "%10$s");
 	}

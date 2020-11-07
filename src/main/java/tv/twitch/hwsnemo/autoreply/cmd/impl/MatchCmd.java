@@ -106,12 +106,9 @@ public class MatchCmd implements Cmd {
 		set = -1;
 	}
 
-	private static String setformat = "%1$s (%5$d) | %2$d - %3$d | (%6$d) %4$s";
-	// {ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})
-	// {oppname}
-
-	private static String scoreformat = "%1$s | %2$d - %3$d | %4$s";
-	// {ourname} | {ourscore} - {oppscore} | {oppname}
+	private static String setformat = getScoreFormat("{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}");
+	
+	private static String scoreformat = getScoreFormat("{ourname} | {ourscore} - {oppscore} | {oppname}");
 
 	private String getScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
