@@ -36,7 +36,7 @@ Keys (oauth, defch, ...) of the config are not case sensitive so you can use `Ch
 Default values:
 - `chatprefix`: (no prefix)
 - `cmdcooldown`: 3000
-- `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) osu.ppy.sh/s/{setid}` and you can also use `{beatmapid}`
+- `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}` and you can also use `{beatmapid}` and `{setid}`
 - `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`
 - `setscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}`
 
