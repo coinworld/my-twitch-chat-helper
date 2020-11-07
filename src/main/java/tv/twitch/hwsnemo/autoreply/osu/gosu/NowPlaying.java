@@ -1,7 +1,6 @@
 package tv.twitch.hwsnemo.autoreply.osu.gosu;
 
 import tv.twitch.hwsnemo.autoreply.osu.JsonTool;
-import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 
 public class NowPlaying {
 	private int id;
@@ -62,6 +61,7 @@ public class NowPlaying {
 	public static NowPlaying get() throws Exception {
 		NowPlaying now = new NowPlaying();
 		JsonTool jt = new JsonTool(GosuParser.get());
+		jt.setDefaultString("<notfound>");
 
 		jt.loopUntilEnd(() -> {
 			if (jt.isObjectStart("menu")) {
@@ -108,13 +108,6 @@ public class NowPlaying {
 				});
 			}
 		});
-
-		if ((now.id < 0 || now.set < 0) || now.artist == null || now.title == null || now.mapper == null
-				|| now.difficulty == null || now.fullSR < 0) {
-			throw new SendableException("Failed to get current song.",
-					String.format("id: %d, set: %d, artist: %s, title: %s, mapper: %s, difficulty: %s, fullSR: %f",
-							now.id, now.set, now.artist, now.title, now.mapper, now.difficulty, now.fullSR));
-		}
 
 		return now;
 	}

@@ -80,13 +80,19 @@ public class JsonTool {
 			return -1;
 		}
 	}
+	
+	private String defStr = null;
 
 	public String getText() {
 		try {
 			return jp.getText();
-		} catch (Exception e) {
-			return null;
+		} catch (Exception e) {	
+			return defStr;
 		}
+	}
+	
+	public void setDefaultString(String str) {
+		defStr = str;
 	}
 
 }
