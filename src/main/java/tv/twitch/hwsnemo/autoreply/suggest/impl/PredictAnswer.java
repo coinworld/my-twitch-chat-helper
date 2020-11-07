@@ -42,7 +42,7 @@ public class PredictAnswer implements Suggest {
 			map = ConfigFile.get("predict.txt");
 		} catch (IOException e) {
 			map = Collections.emptyMap();
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
