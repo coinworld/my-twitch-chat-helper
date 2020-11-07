@@ -35,12 +35,12 @@ public class MatchCmd implements Cmd {
 	}
 
 	private static class AutoThread<T extends Result> extends Thread {
-		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc, Match m) {
+		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc) {
 			super(() -> {
 				try {
 					Chat.send("Now I track the match automatically.");
 					while (mc.ongoing) {
-						List<Result> res = m.getNow();
+						List<Result> res = mc.m.getNow();
 						if (!res.isEmpty()) {
 							for (Result r : res) {
 								if (r.isDraw())
@@ -201,7 +201,7 @@ public class MatchCmd implements Cmd {
 									else
 										win();
 								}
-							}, TeamVS.class, this, m).start();
+							}, TeamVS.class, this).start();
 						} else {
 							int ourid;
 							int oppid;
@@ -226,7 +226,7 @@ public class MatchCmd implements Cmd {
 								} else if (h2h.getWinner() == oppid) {
 									lose();
 								}
-							}, H2H.class, this, m).start();
+							}, H2H.class, this).start();
 						}
 					} else {
 						inf.send("Now mods can add score by !win or !lose, but check if you have made some typo.");

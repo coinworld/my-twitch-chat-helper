@@ -3,16 +3,17 @@ package tv.twitch.hwsnemo.autoreply.osu.gosu;
 import tv.twitch.hwsnemo.autoreply.osu.JsonTool;
 
 public class NowPlaying {
-	private int id;
-	private int set;
-	private String artist;
-	private String title;
-	private String mapper;
-	private String difficulty;
-	private int minBPM;
-	private int maxBPM;
-	private float fullSR;
-	private String mods;
+	private static final String NF = "<not found>";
+	private int id = -1;
+	private int set = -1;
+	private String artist = NF;
+	private String title = NF;
+	private String mapper = NF;
+	private String difficulty = NF;
+	private int minBPM = -1;
+	private int maxBPM = -1;
+	private float fullSR = -1;
+	private String mods = NF;
 
 	private NowPlaying() {
 
