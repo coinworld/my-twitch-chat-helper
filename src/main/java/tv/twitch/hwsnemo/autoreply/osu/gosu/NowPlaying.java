@@ -61,7 +61,7 @@ public class NowPlaying {
 	public static NowPlaying get() throws Exception {
 		NowPlaying now = new NowPlaying();
 		JsonTool jt = new JsonTool(GosuParser.get());
-		jt.setDefaultString("<notfound>");
+		jt.setDefaultString("<not found>");
 
 		jt.loopUntilEnd(() -> {
 			if (jt.isObjectStart("menu")) {
