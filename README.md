@@ -75,11 +75,14 @@ There are some basic commands you can use right away. You can try to add some ne
 `!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
 **[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). mp id is numbers after https://osu.ppy.sh/community/matches/
 
+The bot will open the overlay window automatically if `nooverlay` is set as anything that is not `yes`.
+
+You can add the overlay window to OBS and if you have set `backcolor` as `black`, you should add a **Color Key** filter, set **Key Color Type** as **Custom Color** and set it as black.
+
 Additional Options:
 - `set:<number of games>` to automatically reset score and update set score.
 - `nowarmup`: By default, this bot ignores every game held before `!start`. You can use this option to disable that and the bot will get every game before.
 - `autoname`: Can only be used with team option. If the match title is like `some name: (TeamRed) VS (TeamBlue)` and you use this option, the bot will automatically apply team names.
-
 
 `!start` :
 **[MODS]** Mods can add score with `!win` and `!lose` manually. These two commands also can be used when it's automatically tracked. `set:<score>` can be used and `!win 2` to add 2 score is also possible.
