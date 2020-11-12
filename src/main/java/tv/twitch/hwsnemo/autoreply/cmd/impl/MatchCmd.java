@@ -121,7 +121,7 @@ public class MatchCmd implements Cmd {
 		m = null;
 		mp = -1;
 		set = -1;
-		
+
 		if (tw != null)
 			tw.close();
 		tw = null;
@@ -364,7 +364,7 @@ public class MatchCmd implements Cmd {
 
 		return true;
 	}
-	
+
 	private void setName(String our, String opp) {
 		ourname = our;
 		oppname = opp;
@@ -396,7 +396,7 @@ public class MatchCmd implements Cmd {
 		}
 		updateOverlay();
 	}
-	
+
 	private void loseSet(int set) {
 		oppsetscore += set;
 		resetScore();
@@ -412,17 +412,20 @@ public class MatchCmd implements Cmd {
 		}
 		updateOverlay();
 	}
-	
+
 	private void winSet(int set) {
 		oursetscore += set;
 		resetScore();
-		
+
 		updateOverlay();
 	}
-	
+
 	private void updateOverlay() {
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		if (tw != null) {
+			synchronized (tw) {
+				tw.setText(getOverlayScore());
+			}
+		}
 	}
 
 }

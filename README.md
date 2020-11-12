@@ -75,7 +75,7 @@ There are some basic commands you can use right away. You can try to add some ne
 `!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
 **[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). mp id is numbers after https://osu.ppy.sh/community/matches/
 
-The bot will open the overlay window automatically if `nooverlay` is set as anything that is not `yes`.
+The bot will open the overlay window automatically if `nooverlay` is set as anything that is not `yes`. The window will close if you type `!over`.
 
 You can add the overlay window to OBS and if you have set `backcolor` as `black`, you should add a **Color Key** filter, set **Key Color Type** as **Custom Color** and set it as black.
 
