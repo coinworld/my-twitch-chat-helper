@@ -53,9 +53,11 @@ Default values (If you don't set these values, values below are used so you don'
 - `overlayscoreformat`: `{ourscore} - {oppscore}` (you can use name too)
 - `overlaysetscoreformat`: `({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})` (same as above)
 - `font`: `Serif`
-- `fontsize`: `30`
+- `fontsize`: 30
 - `backcolor`: `white`
 - `labelcolor`: `black`
+- `width`: 300
+- `height`: 100
 
 You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magenta, orange, pink, red and white` for color.
 
