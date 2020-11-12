@@ -12,6 +12,7 @@ import tv.twitch.hwsnemo.autoreply.osu.Match;
 import tv.twitch.hwsnemo.autoreply.osu.Match.Names;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
+import tv.twitch.hwsnemo.autoreply.osu.TextWindow;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
@@ -28,7 +29,21 @@ public class MatchCmd implements Cmd {
 		if (Main.getConfig().containsKey("setscoreformat")) {
 			setformat = getScoreFormat(Main.getConfig().get("setscoreformat"));
 		}
+
+		if (!Main.isYes("nooverlay")) {
+			overlay = true;
+
+			if (Main.getConfig().containsKey("overlayscoreformat")) {
+				overlayscoreformat = getScoreFormat(Main.getConfig().get("overlayscoreformat"));
+			}
+
+			if (Main.getConfig().containsKey("overlaysetscoreformat")) {
+				setformat = getScoreFormat(Main.getConfig().get("overlaysetscoreformat"));
+			}
+		}
 	}
+
+	private boolean overlay = false;
 
 	private static interface AutoRun<T extends Result> {
 		void go(T result);
@@ -91,6 +106,8 @@ public class MatchCmd implements Cmd {
 
 	private Match m;
 
+	private TextWindow tw;
+
 	private void reset() {
 		ourname = "Our team";
 		ourscore = 0;
@@ -104,17 +121,34 @@ public class MatchCmd implements Cmd {
 		m = null;
 		mp = -1;
 		set = -1;
+		
+		if (tw != null)
+			tw.close();
+		tw = null;
 	}
 
-	private static String setformat = getScoreFormat("{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}");
-	
+	private static String setformat = getScoreFormat(
+			"{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}");
+
 	private static String scoreformat = getScoreFormat("{ourname} | {ourscore} - {oppscore} | {oppname}");
 
 	private String getScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
-			return String.format(setformat, ourname, oursetscore, ourscore, oppscore, oppsetscore, oppname);
+			return String.format(setformat, ourname, ourscore, oppscore, oppname, oursetscore, oppsetscore);
 		}
 		return String.format(scoreformat, ourname, ourscore, oppscore, oppname);
+	}
+
+	private static String overlaysetformat = getScoreFormat(
+			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})");
+
+	private static String overlayscoreformat = getScoreFormat("{ourscore} - {oppscore}");
+
+	private String getOverlayScore() {
+		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
+			return String.format(overlaysetformat, ourname, ourscore, oppscore, oppname, oursetscore, oppsetscore);
+		}
+		return String.format(overlayscoreformat, ourname, ourscore, oppscore, oppname);
 	}
 
 	private static String getScoreFormat(String format) {
@@ -235,6 +269,10 @@ public class MatchCmd implements Cmd {
 					ongoing = true;
 					inf.send("Now mods can add score by !win or !lose");
 				}
+
+				if (ongoing && overlay) {
+					tw = new TextWindow("Score Overlay", getOverlayScore());
+				}
 			} else {
 				inf.send("Match is not over yet.");
 			}
@@ -258,8 +296,7 @@ public class MatchCmd implements Cmd {
 				String sc = inf.getArg().toLowerCase();
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
-					oursetscore += n;
-					resetScore();
+					winSet(n);
 					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
@@ -278,8 +315,7 @@ public class MatchCmd implements Cmd {
 				String sc = inf.getArg().toLowerCase();
 				if (sc.startsWith("set:")) {
 					n = Integer.parseInt(sc.substring(4));
-					oppsetscore += n;
-					resetScore();
+					loseSet(n);
 					n = -1;
 				} else {
 					n = Integer.parseInt(sc);
@@ -319,8 +355,7 @@ public class MatchCmd implements Cmd {
 				return true;
 			}
 
-			ourname = t[0].replace('*', ' ');
-			oppname = t[1].replace('*', ' ');
+			setName(t[0].replace('*', ' '), t[1].replace('*', ' '));
 
 			inf.send("Team names are set.");
 		} else {
@@ -329,11 +364,20 @@ public class MatchCmd implements Cmd {
 
 		return true;
 	}
+	
+	private void setName(String our, String opp) {
+		ourname = our;
+		oppname = opp;
+		if (tw != null)
+			tw.setText(getOverlayScore());
+	}
 
 	private void resetScore(boolean set) {
 		if (set) {
 			oursetscore = 0;
 			oppsetscore = 0;
+			if (tw != null)
+				tw.setText(getOverlayScore());
 		} else {
 			resetScore();
 		}
@@ -342,6 +386,8 @@ public class MatchCmd implements Cmd {
 	private void resetScore() {
 		ourscore = 0;
 		oppscore = 0;
+		if (tw != null)
+			tw.setText(getOverlayScore());
 	}
 
 	private void lose() {
@@ -351,6 +397,15 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oppsetscore++;
 		}
+		if (tw != null)
+			tw.setText(getOverlayScore());
+	}
+	
+	private void loseSet(int set) {
+		oppsetscore += set;
+		resetScore();
+		if (tw != null)
+			tw.setText(getOverlayScore());
 	}
 
 	private void win() {
@@ -360,6 +415,16 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oursetscore++;
 		}
+		if (tw != null)
+			tw.setText(getOverlayScore());
+	}
+	
+	private void winSet(int set) {
+		oursetscore += set;
+		resetScore();
+		
+		if (tw != null)
+			tw.setText(getOverlayScore());
 	}
 
 }

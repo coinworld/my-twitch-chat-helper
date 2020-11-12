@@ -17,6 +17,14 @@ npformat <format>
 scoreformat <format>
 setscoreformat <format>
 
+nooverlay <yn>
+font <font name>
+fontsize <font size>
+backcolor <color>
+labelcolor <color>
+overlayscoreformat <format>
+overlaysetscoreformat <format>
+
 enablechatlog <yn>
 enablematchcmd <yn>
 enablemisccmd <yn>
@@ -33,12 +41,20 @@ for **osu! api**: https://osu.ppy.sh/p/api/ (for match tracking / Tracking calls
 Every `<yn>` entries are either `yes` or anything else and not having them set just enables them (Basically `oauth`, `twichname`, `defch` are the only necessary entries. osu! api key is not needed if you are not using features like match tracking).
 Keys (oauth, defch, ...) of the config are not case sensitive so you can use `ChatPrefix` or so on to improve readability.
 
-Default values:
+Default values (If you don't set these values, values below are used so you don't have to set every value manually):
 - `chatprefix`: (no prefix)
 - `cmdcooldown`: 3000
 - `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}` and you can also use `{beatmapid}` and `{setid}`
 - `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`
 - `setscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}`
+- `overlayscoreformat`: `{ourscore} - {oppscore}` (you can use name too)
+- `overlaysetscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}` (same as above)
+- `font`: `Serif`
+- `fontsize`: `30`
+- `backcolor`: `white`
+- `labelcolor`: `black`
+
+You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magenta, orange, pink, red and white` for color.
 
 ### predict.txt (example)
 ```
