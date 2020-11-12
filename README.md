@@ -25,6 +25,8 @@ backcolor <color>
 labelcolor <color>
 overlayscoreformat <format>
 overlaysetscoreformat <format>
+width <numbers>
+height <numbers>
 
 enablechatlog <yn>
 enablematchcmd <yn>
