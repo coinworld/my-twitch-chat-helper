@@ -368,16 +368,14 @@ public class MatchCmd implements Cmd {
 	private void setName(String our, String opp) {
 		ourname = our;
 		oppname = opp;
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		updateOverlay();
 	}
 
 	private void resetScore(boolean set) {
 		if (set) {
 			oursetscore = 0;
 			oppsetscore = 0;
-			if (tw != null)
-				tw.setText(getOverlayScore());
+			updateOverlay();
 		} else {
 			resetScore();
 		}
@@ -386,8 +384,7 @@ public class MatchCmd implements Cmd {
 	private void resetScore() {
 		ourscore = 0;
 		oppscore = 0;
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		updateOverlay();
 	}
 
 	private void lose() {
@@ -397,15 +394,13 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oppsetscore++;
 		}
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		updateOverlay();
 	}
 	
 	private void loseSet(int set) {
 		oppsetscore += set;
 		resetScore();
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		updateOverlay();
 	}
 
 	private void win() {
@@ -415,14 +410,17 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oursetscore++;
 		}
-		if (tw != null)
-			tw.setText(getOverlayScore());
+		updateOverlay();
 	}
 	
 	private void winSet(int set) {
 		oursetscore += set;
 		resetScore();
 		
+		updateOverlay();
+	}
+	
+	private void updateOverlay() {
 		if (tw != null)
 			tw.setText(getOverlayScore());
 	}
