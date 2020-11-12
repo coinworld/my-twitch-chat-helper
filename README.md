@@ -17,7 +17,7 @@ npformat <format>
 scoreformat <format>
 setscoreformat <format>
 
-nooverlay <yn>
+nooverlay <yn, this feature is meant to be disabled by default. so write anything that isn't 'yes'>
 font <font name>
 fontsize <font size>
 backcolor <color>
