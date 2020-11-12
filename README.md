@@ -48,7 +48,7 @@ Default values (If you don't set these values, values below are used so you don'
 - `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`
 - `setscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}`
 - `overlayscoreformat`: `{ourscore} - {oppscore}` (you can use name too)
-- `overlaysetscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}` (same as above)
+- `overlaysetscoreformat`: `({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})` (same as above)
 - `font`: `Serif`
 - `fontsize`: `30`
 - `backcolor`: `white`
