@@ -16,6 +16,7 @@ cmdcooldown <duration in milliseconds, 1 sec = 1000>
 npformat <format>
 scoreformat <format>
 setscoreformat <format>
+autoscorechat <yn>
 
 nooverlay <yn, this feature is meant to be disabled by default. so write anything that isn't 'yes'>
 font <font name>
@@ -110,34 +111,34 @@ Displays score with the info (if set).
 _Use scenario because I know my english is bad_
 
 ```
-!start mp:12345 player:big*black,freedom*dive set:3 - big black is 'me' and freedom dive is 'opponent'
+!start mp:12345 player:a,b set:3 - a is 'me' and b is 'opponent'
 Bot> Now I track the match automatically.
 
 *in case the score is already 1-2*
 
 !win
-Bot> big black | 1 - 0 | freedom dive
+Bot> a | 1 - 0 | b
 
 !lose 2
-Bot> big black | 1 - 2 | freedom dive
+Bot> a | 1 - 2 | b
 
 !setinfo hello
 Bot> Info is now set.
 
 !score
-Bot> big black | 1 - 2 | freedom dive / hello
+Bot> a | 1 - 2 | b / hello
 
-*freedom dive wins*
-Bot> Auto: big black (0) | 0 - 0 | (1) freedom dive
+*b wins*
+Bot> Auto: a (0) | 0 - 0 | (1) b  <-- you can disable this Auto msg with 'autoscorechat' in config
 
-*big black wins*
-Bot> Auto: big black (0) | 1 - 0 | (1) freedom dive
+*a wins*
+Bot> Auto: a (0) | 1 - 0 | (1) b
 
 !reset
-Bot> big black (0) | 0 - 0 | (1) freedom dive
+Bot> a (0) | 0 - 0 | (1) b
 
 !reset all
-Bot> big black | 0 - 0 | freedom dive
+Bot> a | 0 - 0 | b
 
 !over
 Bot> Now that every information is gone, you can start again.

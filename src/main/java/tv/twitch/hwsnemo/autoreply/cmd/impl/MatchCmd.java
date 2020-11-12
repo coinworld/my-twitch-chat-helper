@@ -21,6 +21,8 @@ public class MatchCmd implements Cmd {
 
 	public MatchCmd() throws NotEnabledException {
 		Main.throwOr("enablematchcmd");
+		
+		autoscorechat = Main.isYes("autoscorechat");
 
 		if (Main.getConfig().containsKey("scoreformat")) {
 			scoreformat = getScoreFormat(Main.getConfig().get("scoreformat"));
@@ -42,6 +44,8 @@ public class MatchCmd implements Cmd {
 			}
 		}
 	}
+	
+	private boolean autoscorechat = true;
 
 	private boolean overlay = false;
 
@@ -63,7 +67,9 @@ public class MatchCmd implements Cmd {
 								if (clazz.isInstance(r))
 									run.go(clazz.cast(r));
 							}
-							Chat.send("Auto: " + mc.getScore());
+							if (mc.autoscorechat)
+								Chat.send("Auto: " + mc.getScore());
+							mc.updateOverlay();
 						}
 						Thread.sleep(3000L);
 					}
@@ -361,21 +367,19 @@ public class MatchCmd implements Cmd {
 		} else {
 			return false;
 		}
-
+		updateOverlay();
 		return true;
 	}
 
 	private void setName(String our, String opp) {
 		ourname = our;
 		oppname = opp;
-		updateOverlay();
 	}
 
 	private void resetScore(boolean set) {
 		if (set) {
 			oursetscore = 0;
 			oppsetscore = 0;
-			updateOverlay();
 		} else {
 			resetScore();
 		}
@@ -384,7 +388,6 @@ public class MatchCmd implements Cmd {
 	private void resetScore() {
 		ourscore = 0;
 		oppscore = 0;
-		updateOverlay();
 	}
 
 	private void lose() {
@@ -394,13 +397,11 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oppsetscore++;
 		}
-		updateOverlay();
 	}
 
 	private void loseSet(int set) {
 		oppsetscore += set;
 		resetScore();
-		updateOverlay();
 	}
 
 	private void win() {
@@ -410,21 +411,16 @@ public class MatchCmd implements Cmd {
 			ourscore = 0;
 			oursetscore++;
 		}
-		updateOverlay();
 	}
 
 	private void winSet(int set) {
 		oursetscore += set;
 		resetScore();
-
-		updateOverlay();
 	}
 
 	private void updateOverlay() {
 		if (tw != null) {
-			synchronized (tw) {
-				tw.setText(getOverlayScore());
-			}
+			tw.setText(getOverlayScore());
 		}
 	}
 

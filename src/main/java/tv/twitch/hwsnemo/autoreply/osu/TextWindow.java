@@ -2,6 +2,7 @@ package tv.twitch.hwsnemo.autoreply.osu;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class TextWindow {
 		int size = 30;
 		String backcolor = "white";
 		String labelcolor = "black";
+		int width = 300;
+		int height = 100;
 
 		Map<String, String> m = Main.getConfig();
 
@@ -32,10 +35,16 @@ public class TextWindow {
 
 		if (m.containsKey("labelcolor"))
 			labelcolor = m.get("labelcolor");
+		
+		if (m.containsKey("width"))
+			width = Integer.parseInt(m.get("width"));
+		
+		if (m.containsKey("height"))
+			height = Integer.parseInt(m.get("height"));
 
 		f = new JFrame(title);
 		f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		f.setSize(300, 100);
+		f.setSize(width, height);
 		f.getContentPane().setBackground(getColor(backcolor.toLowerCase(), Color.white));
 		l = new JLabel(text, SwingConstants.CENTER);
 		l.setFont(new Font(font, Font.BOLD, size));
@@ -44,12 +53,13 @@ public class TextWindow {
 		f.setVisible(true);
 	}
 
-	public void setText(String text) {
+	public synchronized void setText(String text) {
 		l.setText(text);
 	}
 
 	public void close() {
 		f.setVisible(false);
+		f.dispatchEvent(new WindowEvent(f, WindowEvent.WINDOW_CLOSING));
 		f.dispose();
 	}
 
