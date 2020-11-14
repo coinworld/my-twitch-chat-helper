@@ -32,7 +32,6 @@ public class Main {
 		if (args.length != 0) {
 			MainConfig.setConfigName(args[0]);
 		}
-		MainConfig.getConfig();
 
 		if (RUN && MainConfig.getConfig() != null) {
 			String oauth = null;

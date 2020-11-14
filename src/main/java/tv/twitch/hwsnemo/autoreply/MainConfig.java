@@ -15,10 +15,8 @@ public class MainConfig {
 
 	public static Map<String, String> getConfig() {
 		if (config == null) {
-			Map<String, String> conf;
 			try {
-				conf = Collections.unmodifiableMap(ConfigFile.get(confname));
-				config = conf;
+				config = Collections.unmodifiableMap(ConfigFile.get(confname));
 			} catch (IOException e) {
 				Main.write("Failed to load Config.");
 				e.printStackTrace();
