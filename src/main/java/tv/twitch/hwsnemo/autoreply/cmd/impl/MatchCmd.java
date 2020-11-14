@@ -13,6 +13,7 @@ import tv.twitch.hwsnemo.autoreply.osu.Match;
 import tv.twitch.hwsnemo.autoreply.osu.Match.Names;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
+import tv.twitch.hwsnemo.autoreply.osu.TextFileWrite;
 import tv.twitch.hwsnemo.autoreply.osu.TextWindow;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
@@ -26,7 +27,20 @@ public class MatchCmd implements Cmd {
 
 	private static boolean autoscorechat = MainConfig.isYes("autoscorechat");
 
-	private static boolean overlay = !MainConfig.isYes("nooverlay");
+	private static enum Overlay {
+		DISABLED, TEXT, WINDOW;
+	}
+
+	private static Overlay overlay = Overlay.DISABLED;
+
+	static {
+		String ov = MainConfig.getString("overlaytype", "disabled");
+		if (ov.equalsIgnoreCase("text")) {
+			overlay = Overlay.TEXT;
+		} else if (ov.equalsIgnoreCase("window")) {
+			overlay = Overlay.WINDOW;
+		}
+	}
 
 	private static interface AutoRun<T extends Result> {
 		void go(T result);
@@ -61,7 +75,7 @@ public class MatchCmd implements Cmd {
 			});
 		}
 	}
-	
+
 	{
 		reset();
 	}
@@ -85,6 +99,8 @@ public class MatchCmd implements Cmd {
 	private Match m;
 
 	private TextWindow tw;
+	
+	private TextFileWrite fw;
 
 	private void reset() {
 		ourname = "Our team";
@@ -102,6 +118,10 @@ public class MatchCmd implements Cmd {
 		if (tw != null)
 			tw.close();
 		tw = null;
+		
+		if (fw != null)
+			fw.write(getOverlayScore());
+		fw = null;
 	}
 
 	private static String setformat = getScoreFormat(MainConfig.getString("setscoreformat",
@@ -188,7 +208,7 @@ public class MatchCmd implements Cmd {
 							inf.send("Something is wrong with tracking");
 							return true;
 						}
-						//this.mp = mpid;
+						// this.mp = mpid;
 						if (isteam) {
 							if (autoname) {
 								Names names = m.getNames();
@@ -251,8 +271,11 @@ public class MatchCmd implements Cmd {
 					inf.send("Now mods can add score by !win or !lose");
 				}
 
-				if (ongoing && overlay) {
-					tw = new TextWindow("Score Overlay", getOverlayScore());
+				if (ongoing) {
+					if (overlay == Overlay.WINDOW)
+						tw = new TextWindow("Score Overlay", getOverlayScore());
+					else if (overlay == Overlay.TEXT)
+						fw = new TextFileWrite("score.txt");
 				}
 			} else {
 				inf.send("Match is not over yet.");
@@ -396,6 +419,8 @@ public class MatchCmd implements Cmd {
 	private void updateOverlay() {
 		if (tw != null) {
 			tw.setText(getOverlayScore());
+		} else if (fw != null) {
+			fw.write(getOverlayScore());
 		}
 	}
 
