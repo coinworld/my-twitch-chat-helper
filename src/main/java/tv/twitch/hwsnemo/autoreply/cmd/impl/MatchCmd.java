@@ -61,9 +61,7 @@ public class MatchCmd implements Cmd {
 			});
 		}
 	}
-
-	private int mp;
-
+	
 	{
 		reset();
 	}
@@ -99,7 +97,6 @@ public class MatchCmd implements Cmd {
 		ongoing = false;
 		isblue = true;
 		m = null;
-		mp = -1;
 		set = -1;
 
 		if (tw != null)
@@ -191,7 +188,7 @@ public class MatchCmd implements Cmd {
 							inf.send("Something is wrong with tracking");
 							return true;
 						}
-						this.mp = mpid;
+						//this.mp = mpid;
 						if (isteam) {
 							if (autoname) {
 								Names names = m.getNames();
@@ -316,8 +313,8 @@ public class MatchCmd implements Cmd {
 			if (!ongoing)
 				return true;
 
-			if (mp >= 0) {
-				inf.send("https://osu.ppy.sh/mp/" + mp);
+			if (m != null) {
+				inf.send("https://osu.ppy.sh/mp/" + m.getMP());
 			}
 		} else if (inf.chkPut(CmdLevel.MOD, "!reset")) {
 			if (!ongoing)
