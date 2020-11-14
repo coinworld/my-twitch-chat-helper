@@ -3,11 +3,12 @@ package tv.twitch.hwsnemo.autoreply.osu;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
-import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
-import tv.twitch.hwsnemo.autoreply.Main;
+import tv.twitch.hwsnemo.autoreply.MainConfig;
 
 public class TextWindow {
 
@@ -15,32 +16,12 @@ public class TextWindow {
 	private final JLabel l;
 
 	public TextWindow(String title, String text) {
-		String font = "Serif";
-		int size = 30;
-		String backcolor = "white";
-		String labelcolor = "black";
-		int width = 300;
-		int height = 100;
-
-		Map<String, String> m = Main.getConfig();
-
-		if (m.containsKey("font"))
-			font = m.get("font");
-
-		if (m.containsKey("fontsize"))
-			size = Integer.parseInt(m.get("fontsize"));
-
-		if (m.containsKey("backcolor"))
-			backcolor = m.get("backcolor");
-
-		if (m.containsKey("labelcolor"))
-			labelcolor = m.get("labelcolor");
-		
-		if (m.containsKey("width"))
-			width = Integer.parseInt(m.get("width"));
-		
-		if (m.containsKey("height"))
-			height = Integer.parseInt(m.get("height"));
+		String font = MainConfig.getString("font", "Serif");
+		int size = MainConfig.getNum("fontsize", 30);
+		String backcolor = MainConfig.getString("backcolor", "white");
+		String labelcolor = MainConfig.getString("labelcolor", "black");
+		int width = MainConfig.getNum("width", 300);
+		int height = MainConfig.getNum("height", 100);
 
 		f = new JFrame(title);
 		f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

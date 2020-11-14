@@ -1,6 +1,7 @@
 package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import tv.twitch.hwsnemo.autoreply.Main;
+import tv.twitch.hwsnemo.autoreply.MainConfig;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
@@ -10,16 +11,14 @@ import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
 public class NpCmd implements Cmd {
 
-	private static String format = getFormat("{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}");
+	private static String format = getFormat(MainConfig.getString("npformat",
+			"{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}"));
 
-	public static void setFormat(String format) {
-		NpCmd.format = getFormat(format);
-	}
-	
 	private static String getFormat(String form) {
 		return form.replace("{artist}", "%1$s").replace("{song}", "%2$s").replace("{difficulty}", "%3$s")
-				.replace("{mapper}", "%4$s").replace("{sr}", "%5$.2f").replace("{bpm}", "%6$s").replace("{setid}", "%7$d")
-				.replace("{beatmapid}", "%8$d").replace("{mods}", "%9$s").replace("{url}", "%10$s");
+				.replace("{mapper}", "%4$s").replace("{sr}", "%5$.2f").replace("{bpm}", "%6$s")
+				.replace("{setid}", "%7$d").replace("{beatmapid}", "%8$d").replace("{mods}", "%9$s")
+				.replace("{url}", "%10$s");
 	}
 
 	private static String format(NowPlaying np) {
@@ -41,10 +40,6 @@ public class NpCmd implements Cmd {
 
 	public NpCmd() throws NotEnabledException {
 		Main.throwOr("enablenpcmd");
-
-		if (Main.getConfig().containsKey("npformat")) {
-			setFormat(Main.getConfig().get("npformat"));
-		}
 	}
 
 	@Override
@@ -57,7 +52,8 @@ public class NpCmd implements Cmd {
 				inf.send(e.getMessage());
 				return true;
 			} catch (Exception e) {
-				Main.writeWarn("You must run gosumemory to use !np command. If it is running, please report this issue.");
+				Main.writeWarn(
+						"You must run gosumemory to use !np command. If it is running, please report this issue.");
 				inf.send("An unknown exception occurred.");
 				return true;
 			}

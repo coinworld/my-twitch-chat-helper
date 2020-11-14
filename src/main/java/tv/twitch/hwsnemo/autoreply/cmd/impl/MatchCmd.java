@@ -4,6 +4,7 @@ import java.util.List;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
+import tv.twitch.hwsnemo.autoreply.MainConfig;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
@@ -21,33 +22,11 @@ public class MatchCmd implements Cmd {
 
 	public MatchCmd() throws NotEnabledException {
 		Main.throwOr("enablematchcmd");
-		
-		autoscorechat = Main.isYes("autoscorechat");
-
-		if (Main.getConfig().containsKey("scoreformat")) {
-			scoreformat = getScoreFormat(Main.getConfig().get("scoreformat"));
-		}
-
-		if (Main.getConfig().containsKey("setscoreformat")) {
-			setformat = getScoreFormat(Main.getConfig().get("setscoreformat"));
-		}
-
-		if (!Main.isYes("nooverlay")) {
-			overlay = true;
-
-			if (Main.getConfig().containsKey("overlayscoreformat")) {
-				overlayscoreformat = getScoreFormat(Main.getConfig().get("overlayscoreformat"));
-			}
-
-			if (Main.getConfig().containsKey("overlaysetscoreformat")) {
-				setformat = getScoreFormat(Main.getConfig().get("overlaysetscoreformat"));
-			}
-		}
 	}
-	
-	private boolean autoscorechat = true;
 
-	private boolean overlay = false;
+	private static boolean autoscorechat = MainConfig.isYes("autoscorechat");
+
+	private static boolean overlay = !MainConfig.isYes("nooverlay");
 
 	private static interface AutoRun<T extends Result> {
 		void go(T result);
@@ -57,7 +36,6 @@ public class MatchCmd implements Cmd {
 		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc) {
 			super(() -> {
 				try {
-					Chat.send("Now I track the match automatically.");
 					while (mc.ongoing) {
 						List<Result> res = mc.m.getNow();
 						if (!res.isEmpty()) {
@@ -67,7 +45,7 @@ public class MatchCmd implements Cmd {
 								if (clazz.isInstance(r))
 									run.go(clazz.cast(r));
 							}
-							if (mc.autoscorechat)
+							if (MatchCmd.autoscorechat)
 								Chat.send("Auto: " + mc.getScore());
 							mc.updateOverlay();
 						}
@@ -91,15 +69,11 @@ public class MatchCmd implements Cmd {
 	}
 
 	private String ourname;
-
 	private volatile int ourscore;
-
 	private int oursetscore;
 
 	private String oppname;
-
 	private volatile int oppscore;
-
 	private int oppsetscore;
 
 	private String desc;
@@ -133,10 +107,11 @@ public class MatchCmd implements Cmd {
 		tw = null;
 	}
 
-	private static String setformat = getScoreFormat(
-			"{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}");
+	private static String setformat = getScoreFormat(MainConfig.getString("setscoreformat",
+			"{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}"));
 
-	private static String scoreformat = getScoreFormat("{ourname} | {ourscore} - {oppscore} | {oppname}");
+	private static String scoreformat = getScoreFormat(
+			MainConfig.getString("scoreformat", "{ourname} | {ourscore} - {oppscore} | {oppname}"));
 
 	private String getScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
@@ -145,10 +120,11 @@ public class MatchCmd implements Cmd {
 		return String.format(scoreformat, ourname, ourscore, oppscore, oppname);
 	}
 
-	private static String overlaysetformat = getScoreFormat(
-			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})");
+	private static String overlaysetformat = getScoreFormat(MainConfig.getString("overlaysetscoreformat",
+			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})"));
 
-	private static String overlayscoreformat = getScoreFormat("{ourscore} - {oppscore}");
+	private static String overlayscoreformat = getScoreFormat(
+			MainConfig.getString("overlaysetscoreformat", "{ourscore} - {oppscore}"));
 
 	private String getOverlayScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
@@ -242,6 +218,7 @@ public class MatchCmd implements Cmd {
 										win();
 								}
 							}, TeamVS.class, this).start();
+							inf.send("Now the bot will track this TEAM match.");
 						} else {
 							int ourid;
 							int oppid;
@@ -267,6 +244,7 @@ public class MatchCmd implements Cmd {
 									lose();
 								}
 							}, H2H.class, this).start();
+							inf.send("Now the bot will track this 1V1 match.");
 						}
 					} else {
 						inf.send("Now mods can add score by !win or !lose, but check if you have made some typo.");

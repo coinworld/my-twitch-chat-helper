@@ -1,10 +1,7 @@
 package tv.twitch.hwsnemo.autoreply;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Map;
 
 import org.fusesource.jansi.AnsiConsole;
 import org.jline.reader.LineReader;
@@ -27,53 +24,31 @@ public class Main {
 
 	private static PrintStream err;
 
-	private static Map<String, String> config = null;
-	
-	private static String confname = "config.txt";
-
-	public static Map<String, String> getConfig() {
-		if (config == null) {
-			Map<String, String> conf;
-			try {
-				conf = Collections.unmodifiableMap(ConfigFile.get(confname));
-				config = conf;
-			} catch (IOException e) {
-				write("Failed to load Config.");
-				e.printStackTrace();
-			}
-		}
-		return config;
-	}
-
-	public static boolean isYes(String key) {
-		return !config.containsKey(key) || config.get(key).equalsIgnoreCase("yes");
-	}
-
 	public static void main(String[] args) throws Exception {
 		AnsiConsole.systemInstall();
 
 		reader = LineReaderBuilder.builder().build();
 		term = reader.getTerminal();
 		if (args.length != 0) {
-			confname = args[0];
+			MainConfig.setConfigName(args[0]);
 		}
-		getConfig();
+		MainConfig.getConfig();
 
-		if (RUN && config != null) {
+		if (RUN && MainConfig.getConfig() != null) {
 			String oauth = null;
 			String osuapi = null;
 			String defch = null;
 			String twitchname = null;
 
-			for (String key : config.keySet()) {
+			for (String key : MainConfig.getConfig().keySet()) {
 				if (key.equals("oauth")) {
-					oauth = config.get(key);
+					oauth = MainConfig.getConfig().get(key);
 				} else if (key.equals("osuapi")) {
-					osuapi = config.get(key);
+					osuapi = MainConfig.getConfig().get(key);
 				} else if (key.equals("defch")) {
-					defch = config.get(key);
+					defch = MainConfig.getConfig().get(key);
 				} else if (key.equals("twitchname")) {
-					twitchname = config.get(key);
+					twitchname = MainConfig.getConfig().get(key);
 				}
 			}
 
@@ -129,7 +104,7 @@ public class Main {
 	}
 
 	public static void throwOr(String key) throws NotEnabledException {
-		if (!isYes(key)) {
+		if (!MainConfig.isYes(key)) {
 			throw new NotEnabledException();
 		}
 	}
