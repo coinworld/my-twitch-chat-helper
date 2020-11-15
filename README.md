@@ -34,8 +34,6 @@ enablematchcmd <yn>
 enablemisccmd <yn>
 enablenpcmd <yn>
 enabletimecmd <yn>
-enablelinkdetect <yn>
-enablepredict <yn>
 ```
 
 You can get **oauth** here: https://twitchapps.com/tmi/ (for chat)
