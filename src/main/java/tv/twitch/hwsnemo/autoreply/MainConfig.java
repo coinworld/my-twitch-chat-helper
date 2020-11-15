@@ -7,7 +7,7 @@ import java.util.Map;
 public class MainConfig {
 
 	private static Map<String, String> config = null;
-	static String confname = "config.txt";
+	private static String confname = "config.txt";
 	
 	public static void setConfigName(String confname) {
 		MainConfig.confname = confname;
