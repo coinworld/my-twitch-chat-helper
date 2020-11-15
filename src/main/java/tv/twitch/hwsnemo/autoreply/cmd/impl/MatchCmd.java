@@ -214,11 +214,9 @@ public class MatchCmd implements Cmd {
 								Names names = m.getNames();
 								if (names != null) {
 									if (isblue) {
-										ourname = names.blue();
-										oppname = names.red();
+										setName(names.blue(), names.red());
 									} else {
-										ourname = names.red();
-										oppname = names.blue();
+										setName(names.red(), names.blue());
 									}
 								}
 							}
@@ -250,9 +248,7 @@ public class MatchCmd implements Cmd {
 								e.printStackTrace();
 								return true;
 							}
-
-							ourname = ourpname;
-							oppname = opppname;
+							setName(ourpname, opppname);
 
 							new AutoThread<H2H>(h2h -> {
 								if (h2h.getWinner() == ourid) {
