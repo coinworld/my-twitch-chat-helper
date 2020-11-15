@@ -65,14 +65,6 @@ Default values (If you don't set these values, values below are used so you don'
 
 You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magenta, orange, pink, red and white` for color.
 
-### predict.txt (example)
-```
-skin !skin @%s
-key !keys @%s
-```
-
-If **skin** is included in someone's message, the bot will send `!skin @<his name>` if you type ~(without shift, looks similar to ') in the console.
-
 ---
 
 ## Command Guide
@@ -185,7 +177,3 @@ This bot has an interactive shell.
 
 
 It displays chat and you just can chat with it.
-
-If there is a message which needs a specific action, the message will be shown in **bright yellow color** with the reason after |
-
-You can let the bot take an appropriate action by typing `

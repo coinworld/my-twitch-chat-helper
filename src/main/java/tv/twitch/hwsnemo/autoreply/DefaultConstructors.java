@@ -10,8 +10,6 @@ import tv.twitch.hwsnemo.autoreply.cmd.impl.MiscCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.NpCmd;
 import tv.twitch.hwsnemo.autoreply.cmd.impl.TimeCmd;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
-import tv.twitch.hwsnemo.autoreply.suggest.impl.LinkDetector;
-import tv.twitch.hwsnemo.autoreply.suggest.impl.PredictAnswer;
 
 public class DefaultConstructors {
 	private static List<Construction<? extends Cmd>> cmdcons = new ArrayList<>();
@@ -24,8 +22,8 @@ public class DefaultConstructors {
 		cmdcons.add(TimeCmd::new);
 		cmdcons.add(DebugCmd::new);
 
-		suggcons.add(LinkDetector::new);
-		suggcons.add(PredictAnswer::new);
+		// suggcons.add(LinkDetector::new);
+		// suggcons.add(PredictAnswer::new);
 	}
 
 	public static List<Cmd> createCmds() {

@@ -68,8 +68,8 @@ public class MatchCmd implements Cmd {
 				} catch (SendableException e) {
 					Chat.send("Track Aborted: " + e.getMessage());
 				} catch (Exception e) {
-					Chat.send("An unknown exception occurred. Track is now disabled.");
-					e.printStackTrace();
+					Chat.send("An unknown exception occurred. Please tell the bot runner to check log.");
+					Main.writeWarn("Match Tracking Exception: " + e.getMessage());
 				}
 				mc.reset();
 			});
@@ -99,7 +99,7 @@ public class MatchCmd implements Cmd {
 	private Match m;
 
 	private TextWindow tw;
-	
+
 	private TextFileWrite fw;
 
 	private void reset() {
@@ -118,7 +118,7 @@ public class MatchCmd implements Cmd {
 		if (tw != null)
 			tw.close();
 		tw = null;
-		
+
 		if (fw != null)
 			fw.write(getOverlayScore());
 		fw = null;
@@ -416,11 +416,20 @@ public class MatchCmd implements Cmd {
 		resetScore();
 	}
 
+	private String overlayScore = "";
+
 	private void updateOverlay() {
-		if (tw != null) {
-			tw.setText(getOverlayScore());
-		} else if (fw != null) {
-			fw.write(getOverlayScore());
+		if (overlay != Overlay.DISABLED) {
+			String score = getOverlayScore();
+			if (overlayScore.equals(score)) {
+				return;
+			}
+			overlayScore = score;
+			if (tw != null) {
+				tw.setText(score);
+			} else if (fw != null) {
+				fw.write(score);
+			}
 		}
 	}
 
