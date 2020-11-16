@@ -80,7 +80,7 @@ You can add the overlay window to OBS and if you have set `backcolor` as `black`
 
 You can also use `text` option if you don't want to deal with every option that `window` has. This option will create `score.txt` in a directory where the program is in.
 
-To use this in OBS, add **Text** in OBS, check **Read from file** in its properties and choose the file in the dialog.
+To use this in OBS, add **Text** in OBS, check **Read from file** in its properties and choose the file in the Text File 'Browse' dialog.
 
 Additional Options:
 - `set:<number of games>` to automatically reset score and update set score.
