@@ -109,7 +109,7 @@ public class MatchCmd implements Cmd {
 		oppname = "Opponent";
 		oppscore = 0;
 		oppsetscore = 0;
-		desc = null;
+		desc = "No info yet.";
 		ongoing = false;
 		isblue = true;
 		m = null;
@@ -132,27 +132,27 @@ public class MatchCmd implements Cmd {
 
 	private String getScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
-			return String.format(setformat, ourname, ourscore, oppscore, oppname, oursetscore, oppsetscore);
+			return String.format(setformat, ourname, ourscore, oppscore, oppname, desc, oursetscore, oppsetscore);
 		}
-		return String.format(scoreformat, ourname, ourscore, oppscore, oppname);
+		return String.format(scoreformat, ourname, ourscore, oppscore, oppname, desc);
 	}
 
 	private static String overlaysetformat = getScoreFormat(MainConfig.getString("overlaysetscoreformat",
 			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})"));
 
 	private static String overlayscoreformat = getScoreFormat(
-			MainConfig.getString("overlaysetscoreformat", "{ourscore} - {oppscore}"));
+			MainConfig.getString("overlayscoreformat", "{ourscore} - {oppscore}"));
 
 	private String getOverlayScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
-			return String.format(overlaysetformat, ourname, ourscore, oppscore, oppname, oursetscore, oppsetscore);
+			return String.format(overlaysetformat, ourname, ourscore, oppscore, oppname, desc, oursetscore, oppsetscore);
 		}
-		return String.format(overlayscoreformat, ourname, ourscore, oppscore, oppname);
+		return String.format(overlayscoreformat, ourname, ourscore, oppscore, oppname, desc);
 	}
 
 	private static String getScoreFormat(String format) {
 		return format.replace("{ourname}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
-				.replace("{oppname}", "%4$s").replace("{oursetscore}", "%5$d").replace("{oppsetscore}", "%6$d");
+				.replace("{oppname}", "%4$s").replace("{info}", "%5$s").replace("{oursetscore}", "%6$d").replace("{oppsetscore}", "%7$d");
 	}
 
 	@Override
@@ -286,7 +286,7 @@ public class MatchCmd implements Cmd {
 			if (!ongoing)
 				return true;
 
-			inf.send(getScore() + (desc != null ? (" / " + desc) : ""));
+			inf.send(getScore());
 		} else if (inf.chkPut(CmdLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;

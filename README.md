@@ -100,7 +100,7 @@ Additional Options:
 Displays mp link if available.
 
 `!setinfo <message>` :
-**[MODS]** Sets info. 
+**[MODS]** Sets info. You can use `{info}` in any score format.
 
 `!score` :
 Displays score with the info (if set).
@@ -124,11 +124,8 @@ Bot> a | 1 - 0 | b
 !lose 2
 Bot> a | 1 - 2 | b
 
-!setinfo hello
-Bot> Info is now set.
-
 !score
-Bot> a | 1 - 2 | b / hello
+Bot> a | 1 - 2 | b
 
 *b wins*
 Bot> Auto: a (0) | 0 - 0 | (1) b  <-- you can disable this Auto msg with 'autoscorechat' in config
