@@ -2,7 +2,6 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.MainConfig;
-import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
@@ -36,10 +35,6 @@ public class NpCmd implements Cmd {
 		}
 		return String.format(format, np.getArtist(), np.getTitle(), np.getDifficulty(), np.getMapper(), np.getFullSR(),
 				bpm, np.getSet(), np.getId(), np.getMods(), url);
-	}
-
-	public NpCmd() throws NotEnabledException {
-		Main.throwOr("enablenpcmd");
 	}
 
 	@Override

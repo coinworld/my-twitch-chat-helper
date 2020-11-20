@@ -2,17 +2,11 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Calendar;
 
-import tv.twitch.hwsnemo.autoreply.Main;
-import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class TimeCmd implements Cmd {
-
-	public TimeCmd() throws NotEnabledException {
-		Main.throwOr("enabletimecmd");
-	}
 
 	private boolean timeset = false;
 	private long eventtime;

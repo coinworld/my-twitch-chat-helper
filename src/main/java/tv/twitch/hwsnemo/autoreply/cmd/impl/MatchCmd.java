@@ -5,7 +5,6 @@ import java.util.List;
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.MainConfig;
-import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
@@ -20,10 +19,6 @@ import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class MatchCmd implements Cmd {
-
-	public MatchCmd() throws NotEnabledException {
-		Main.throwOr("enablematchcmd");
-	}
 
 	private static boolean autoscorechat = MainConfig.isYes("autoscorechat");
 

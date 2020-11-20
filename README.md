@@ -6,13 +6,26 @@ A Twitch chat helper that has some useful features including osu! multiplayer tr
 You need to make `config.txt` and `predict.txt` in a directory where the program is located to make full use of this bot.
 
 ### config.txt
+
+Recommended entries:
+
 ```
 oauth oauth:<twitch oauth>
 twitchname <your twitch name>
 defch #<channel to join>
 osuapi <your osu api key>
-chatprefix <prefix>
 cmdcooldown <duration in milliseconds, 1 sec = 1000>
+enablechatlog <yn>
+
+cmdlisttype <blacklist|whitelist|no_list>
+cmdlist <score,time,misc,debug,np> # ... Commands / <this thing>
+```
+
+Additional entries you can add:
+
+```
+chatprefix <prefix>
+
 npformat <format>
 scoreformat <format>
 setscoreformat <format>
@@ -28,12 +41,6 @@ backcolor <color>
 labelcolor <color>
 width <numbers>
 height <numbers>
-
-enablechatlog <yn>
-enablematchcmd <yn>
-enablemisccmd <yn>
-enablenpcmd <yn>
-enabletimecmd <yn>
 ```
 
 You can get **oauth** here: https://twitchapps.com/tmi/ (for chat)
@@ -65,11 +72,56 @@ You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magent
 
 ---
 
+### Some config.txt examples
+
+only !np bot:
+
+```
+oauth oauth:1234567abcdefg
+twitchname npbot
+defch #channel
+osuapi notused
+
+enablechatlog no
+cmdlisttype whitelist
+cmdlist np
+```
+
+Score and time commands with text overlay:
+
+```
+oauth oauth:1234567abcdefg
+twitchname npbot
+defch #channel
+osuapi 1234567890qwertyuiop
+
+enablechatlog no
+cmdlisttype whitelist
+cmdlist match,time
+
+overlaytype text
+```
+
+Disable only !roll command:
+
+```
+oauth oauth:1234567abcdefg
+twitchname npbot
+defch #channel
+osuapi 1234567890qwertyuiop
+
+enablechatlog no
+cmdlisttype blacklist
+cmdlist misc
+```
+
+---
+
 ## Command Guide
 
 There are some basic commands you can use right away. You can try to add some new commands if you can do some java!
 
-### Match Commands
+### Match Commands / `match`
 
 `!start mp:<mp id> team:<blue/red>` / `!start mp:<mp id> player:<me>,<opponent>` :
 **[MODS]** These two commands are used to track the match automatically. You can use ' ' (blank) in player name by replacing blanks with * (asterisk). mp id is numbers after https://osu.ppy.sh/community/matches/
@@ -143,7 +195,7 @@ Bot> a | 0 - 0 | b
 Bot> Now that every information is gone, you can start again.
 ```
 
-### Time commands
+### Time commands / `time`
 
 Note that this command follows the running system's timezone.
 
@@ -153,17 +205,22 @@ Note that this command follows the running system's timezone.
 `!countdown` / `!cd` :
 Displays countdown.
 
-### Miscellaneous commands
+### Miscellaneous commands / `misc`
 
 `!roll` :
 **[VIP]** You can add number at the end to roll a number between 1 and that number. Default is 100.
 
-### Gosumemory commands
+### Now playing commands / `np`
 
 [You can download gosumemory here](https://github.com/l3lackshark/gosumemory)
 
 `!np` / `!nowplaying` / `!map` / `!song`:
 Displays the current song if gosumemory is available.
+
+### Debug commands / `debug`
+
+`!debug`:
+**[MODS]** Not really used currently. It is used when something wrong happened and I need to check in the chat.
 
 ---
 
