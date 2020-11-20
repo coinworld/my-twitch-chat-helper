@@ -3,7 +3,7 @@ A Twitch chat helper that has some useful features including osu! multiplayer tr
 
 ---
 
-You need to make `config.txt` and `predict.txt` in a directory where the program is located to make full use of this bot.
+You need to make `config.txt` in a directory where the program is located to make full use of this bot.
 
 ### config.txt
 
@@ -90,8 +90,8 @@ cmdlist np
 Score and time commands with text overlay:
 
 ```
-oauth oauth:1234567abcdefg
-twitchname npbot
+oauth oauth:1234567abcdefgh
+twitchname matchbot
 defch #channel
 osuapi 1234567890qwertyuiop
 
@@ -105,8 +105,8 @@ overlaytype text
 Disable only !roll command:
 
 ```
-oauth oauth:1234567abcdefg
-twitchname npbot
+oauth oauth:1234567abcdefghj
+twitchname bot
 defch #channel
 osuapi 1234567890qwertyuiop
 
