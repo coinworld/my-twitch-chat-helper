@@ -217,6 +217,9 @@ Displays countdown.
 `!np` / `!nowplaying` / `!map` / `!song`:
 Displays the current song if gosumemory is available.
 
+`!bloodcat`:
+Displays a bloodcat link of previous `!np` result.
+
 ### Debug commands / `debug`
 
 `!debug`:
