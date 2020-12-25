@@ -30,7 +30,8 @@ public class Chat {
 
 		@Override
 		public void onConnect(ConnectEvent event) throws Exception {
-			Main.revert();
+			// Main.revert();
+			// do not let System.out.println be used
 			
 			ChatCmdInfo.setCooldown(MainConfig.getLong("cmdcooldown", 3000));
 
