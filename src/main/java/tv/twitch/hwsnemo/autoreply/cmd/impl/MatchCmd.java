@@ -58,7 +58,7 @@ public class MatchCmd implements Cmd {
 								Chat.send("Auto: " + mc.getScore());
 							mc.updateOverlay();
 						}
-						Thread.sleep(3000L);
+						Thread.sleep(5000L);
 					}
 				} catch (SendableException e) {
 					Chat.send("Track Aborted: " + e.getMessage());
@@ -66,7 +66,7 @@ public class MatchCmd implements Cmd {
 					Chat.send("An unknown exception occurred. Please tell the bot runner to check log.");
 					Main.writeWarn("Match Tracking Exception: " + e.getMessage());
 				}
-				mc.reset();
+				// mc.reset();
 			});
 		}
 	}

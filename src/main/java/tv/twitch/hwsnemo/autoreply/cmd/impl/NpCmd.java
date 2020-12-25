@@ -28,19 +28,28 @@ public class NpCmd implements Cmd {
 			bpm = "BPM: " + np.getMinBPM() + "-" + np.getMaxBPM();
 		}
 		String url = "<no url available>";
-		if (np.getSet() > 0) {
-			url = "osu.ppy.sh/s/" + np.getSet();
-		} else if (np.getId() > 0) {
-			url = "osu.ppy.sh/b/" + np.getId();
+		String path = setorid(np);
+		if (path != null) {
+			url = "osu.ppy.sh/" + path;
 		}
 		return String.format(format, np.getArtist(), np.getTitle(), np.getDifficulty(), np.getMapper(), np.getFullSR(),
 				bpm, np.getSet(), np.getId(), np.getMods(), url);
 	}
+	
+	private static String setorid(NowPlaying np) {
+		if (np.getSet() > 0) {
+			return "s/" + np.getSet();
+		} else if (np.getId() > 0) {
+			return "b/" + np.getId();
+		}
+		return null;
+	}
+	
+	private NowPlaying np = null;
 
 	@Override
 	public boolean go(CmdInfo inf) {
 		if (inf.chkPut(CmdLevel.NORMAL, "!np", "!nowplaying", "!map", "!song")) {
-			NowPlaying np;
 			try {
 				np = NowPlaying.get();
 			} catch (SendableException e) {
@@ -55,6 +64,12 @@ public class NpCmd implements Cmd {
 
 			inf.send(format(np));
 			return true;
+		} else if (inf.chkPut(CmdLevel.NORMAL, "!bloodcat")) {
+			if (np != null) {
+				String path = setorid(np);
+				if (path != null)
+					inf.send("https://bloodcat.com/osu/" + path);
+			}
 		}
 		return false;
 	}
