@@ -10,6 +10,7 @@ import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
+import tv.twitch.hwsnemo.autoreply.suggest.SuggestInfo;
 
 public class PredictAnswer implements Suggest {
 
@@ -47,11 +48,11 @@ public class PredictAnswer implements Suggest {
 	}
 
 	@Override
-	public SuggestAction hit(String name, String msg) {
-		String eq = msg.toLowerCase();
+	public SuggestAction hit(SuggestInfo inf) {
+		String eq = inf.getMsg().toLowerCase();
 		for (String key : map.keySet()) {
 			if (eq.contains(key)) {
-				return new PredictSuggAct(String.format(map.get(key), name));
+				return new PredictSuggAct(String.format(map.get(key), inf.getSender()));
 			}
 		}
 		return null;

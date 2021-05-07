@@ -3,17 +3,16 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 import java.util.List;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.MainConfig;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.Match;
 import tv.twitch.hwsnemo.autoreply.osu.Match.Names;
 import tv.twitch.hwsnemo.autoreply.osu.OsuApi;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.TextFileWrite;
-import tv.twitch.hwsnemo.autoreply.osu.TextWindow;
 import tv.twitch.hwsnemo.autoreply.osu.result.H2H;
 import tv.twitch.hwsnemo.autoreply.osu.result.Result;
 import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
@@ -22,20 +21,7 @@ public class MatchCmd implements Cmd {
 
 	private static boolean autoscorechat = MainConfig.isYes("autoscorechat");
 
-	private static enum Overlay {
-		DISABLED, TEXT, WINDOW;
-	}
-
-	private static Overlay overlay = Overlay.DISABLED;
-
-	static {
-		String ov = MainConfig.getString("overlaytype", "disabled");
-		if (ov.equalsIgnoreCase("text")) {
-			overlay = Overlay.TEXT;
-		} else if (ov.equalsIgnoreCase("window")) {
-			overlay = Overlay.WINDOW;
-		}
-	}
+	private static boolean overlay = MainConfig.isYes("textscore");
 
 	private static interface AutoRun<T extends Result> {
 		void go(T result);
@@ -92,9 +78,6 @@ public class MatchCmd implements Cmd {
 	private boolean isblue;
 
 	private Match m;
-
-	private TextWindow tw;
-
 	private TextFileWrite fw;
 
 	private void reset() {
@@ -109,10 +92,6 @@ public class MatchCmd implements Cmd {
 		isblue = true;
 		m = null;
 		set = -1;
-
-		if (tw != null)
-			tw.close();
-		tw = null;
 
 		if (fw != null)
 			fw.write(getOverlayScore());
@@ -132,11 +111,11 @@ public class MatchCmd implements Cmd {
 		return String.format(scoreformat, ourname, ourscore, oppscore, oppname, desc);
 	}
 
-	private static String overlaysetformat = getScoreFormat(MainConfig.getString("overlaysetscoreformat",
+	private static String overlaysetformat = getScoreFormat(MainConfig.getString("textsetscoreformat",
 			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})"));
 
 	private static String overlayscoreformat = getScoreFormat(
-			MainConfig.getString("overlayscoreformat", "{ourscore} - {oppscore}"));
+			MainConfig.getString("textscoreformat", "{ourscore} - {oppscore}"));
 
 	private String getOverlayScore() {
 		if (set > 0 || (oursetscore > 0 || oppsetscore > 0)) {
@@ -152,7 +131,7 @@ public class MatchCmd implements Cmd {
 
 	@Override
 	public boolean go(CmdInfo inf) {
-		if (inf.chkPut(CmdLevel.MOD, "!start")) {
+		if (inf.chkPut(ChatLevel.MOD, "!start")) {
 			if (!ongoing) {
 				if (inf.getArg() != null) {
 					String[] args = inf.getArg().split(" ");
@@ -262,27 +241,24 @@ public class MatchCmd implements Cmd {
 					inf.send("Now mods can add score by !win or !lose");
 				}
 
-				if (ongoing) {
-					if (overlay == Overlay.WINDOW)
-						tw = new TextWindow("Score Overlay", getOverlayScore());
-					else if (overlay == Overlay.TEXT)
-						fw = new TextFileWrite("score.txt");
+				if (ongoing && overlay) {
+					fw = new TextFileWrite("score.txt");
 				}
 			} else {
 				inf.send("Match is not over yet.");
 			}
-		} else if (inf.chkPut(CmdLevel.MOD, "!setinfo")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!setinfo")) {
 			if (inf.getArg() == null)
 				return true;
 
 			desc = inf.getArg();
 			inf.send("Info is now set.");
-		} else if (inf.chkPut(CmdLevel.NORMAL, "!score")) {
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!score")) {
 			if (!ongoing)
 				return true;
 
 			inf.send(getScore());
-		} else if (inf.chkPut(CmdLevel.MOD, "!win")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!win")) {
 			if (!ongoing)
 				return true;
 
@@ -301,7 +277,7 @@ public class MatchCmd implements Cmd {
 				win();
 			}
 			inf.send(getScore());
-		} else if (inf.chkPut(CmdLevel.MOD, "!lose")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!lose")) {
 			if (!ongoing)
 				return true;
 
@@ -320,17 +296,17 @@ public class MatchCmd implements Cmd {
 				lose();
 			}
 			inf.send(getScore());
-		} else if (inf.chkPut(CmdLevel.MOD, "!over")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!over")) {
 			reset();
 			inf.send("Now that every information is gone, you can start again.");
-		} else if (inf.chkPut(CmdLevel.NORMAL, "!mp")) {
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!mp")) {
 			if (!ongoing)
 				return true;
 
 			if (m != null) {
 				inf.send("https://osu.ppy.sh/mp/" + m.getMP());
 			}
-		} else if (inf.chkPut(CmdLevel.MOD, "!reset")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!reset")) {
 			if (!ongoing)
 				return true;
 
@@ -340,7 +316,7 @@ public class MatchCmd implements Cmd {
 
 			resetScore();
 			inf.send(getScore());
-		} else if (inf.chkPut(CmdLevel.MOD, "!setname")) {
+		} else if (inf.chkPut(ChatLevel.MOD, "!setname")) {
 			if (inf.getArg() == null) {
 				return true;
 			}
@@ -410,15 +386,13 @@ public class MatchCmd implements Cmd {
 	private String overlayScore = "";
 
 	private void updateOverlay() {
-		if (overlay != Overlay.DISABLED) {
+		if (overlay) {
 			String score = getOverlayScore();
 			if (overlayScore.equals(score)) {
 				return;
 			}
 			overlayScore = score;
-			if (tw != null) {
-				tw.setText(score);
-			} else if (fw != null) {
+			if (fw != null) {
 				fw.write(score);
 			}
 		}

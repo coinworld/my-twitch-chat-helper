@@ -8,6 +8,7 @@ import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.NotEnabledException;
 import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
 import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
+import tv.twitch.hwsnemo.autoreply.suggest.SuggestInfo;
 
 public class LinkDetector implements Suggest {
 
@@ -37,17 +38,17 @@ public class LinkDetector implements Suggest {
 	}
 
 	@Override
-	public SuggestAction hit(String name, String msg) {
-		String[] parts = msg.split(" ");
+	public SuggestAction hit(SuggestInfo inf) {
+		String[] parts = inf.getMsg().split(" ");
 		for (String part : parts) {
 			try {
 				URL url = new URL(part);
 				if (url.getHost().equalsIgnoreCase("osu.ppy.sh")) {
-					return new LinkSuggAct(name);
+					return new LinkSuggAct(inf.getSender());
 				}
 			} catch (MalformedURLException e) {
 				if (part.startsWith("osu.ppy.sh")) {
-					return new LinkSuggAct(name);
+					return new LinkSuggAct(inf.getSender());
 				}
 			}
 		}

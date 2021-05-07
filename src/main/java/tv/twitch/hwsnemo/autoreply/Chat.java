@@ -1,6 +1,6 @@
 package tv.twitch.hwsnemo.autoreply;
 
-import java.util.List;
+import java.util.Iterator;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -13,26 +13,28 @@ import org.pircbotx.hooks.events.ConnectEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.cmd.ChatCmdInfo;
-import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
+import tv.twitch.hwsnemo.autoreply.cmd.CmdProcessor;
 import tv.twitch.hwsnemo.autoreply.cmd.ConsoleCmdInfo;
-import tv.twitch.hwsnemo.autoreply.suggest.Suggest;
-import tv.twitch.hwsnemo.autoreply.suggest.SuggestAction;
+import tv.twitch.hwsnemo.autoreply.suggest.SuggestInfo;
+import tv.twitch.hwsnemo.autoreply.suggest.SuggestProcessor;
 
 public class Chat {
 
 	private static class Listener extends ListenerAdapter {
-		private final List<Cmd> cmds = DefaultConstructors.createCmds();
+		private CmdProcessor cmds;
+		private SuggestProcessor suggs;
 
-		private final List<Suggest> sugg = DefaultConstructors.createSuggs();
 		private final boolean log = MainConfig.isYes("enablechatlog");
-		private volatile SuggestAction act = null;
 
 		@Override
 		public void onConnect(ConnectEvent event) throws Exception {
+			cmds = new CmdProcessor();
+			suggs = new SuggestProcessor();
+
 			// Main.revert();
 			// do not let System.out.println be used
-			
+
 			ChatCmdInfo.setCooldown(MainConfig.getLong("cmdcooldown", 3000));
 
 			Main.write("Connected. Ctrl+C to exit.");
@@ -44,20 +46,20 @@ public class Chat {
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags twitch.tv/commands");
 
 			while (true) {
-				String c = "";
+				String c = startNext();
 				try {
-					c = Main.readLine();
+					if (c == null) c = Main.readLine();
 					if (c.equals("`")) {
-						if (act != null) {
-							act.run();
-							act = null;
+						if (!SuggestProcessor.isEmpty()) {
+							SuggestProcessor.run();
 							Main.write("Action done.");
 							continue;
 						}
 					} else if (c.startsWith("!")) {
 						String[] sp = c.split(" ", 2);
 						CmdInfo ci = new ConsoleCmdInfo(sp);
-						if (loopCmd(ci)) continue;
+						if (loopCmd(ci))
+							continue;
 					}
 					if (!c.isEmpty()) {
 						bot.sendIRC().message(Chat.getDefCh(), c);
@@ -74,12 +76,7 @@ public class Chat {
 		}
 
 		private boolean loopCmd(CmdInfo inf) {
-			for (Cmd cmd : cmds) {
-				if (cmd.go(inf)) {
-					return true;
-				}
-			}
-			return false;
+			return cmds.loop(inf);
 		}
 
 		@Override
@@ -92,20 +89,24 @@ public class Chat {
 				CmdInfo inf = new ChatCmdInfo(sp, event);
 				loopCmd(inf);
 			} else {
-				for (Suggest entry : sugg) {
-					SuggestAction sa = entry.hit(event.getUser().getLogin(), msg);
-					if (sa != null) {
-						this.act = sa;
-						Main.writeWarn(event.getUser().getLogin() + ": " + msg + " | " + sa.reason());
-						break;
-					}
-				} // there is a possibility that message can be displayed later than the prior
-					// message if finding suggestions takes long because pircbotx is async
-				if (act == null && log) {
+				if (suggs.loop(new SuggestInfo(event))) {
+					Main.write("##" + event.getUser().getLogin() + ": " + msg + " | " + SuggestProcessor.reason());
+				}
+				// there is a possibility that message can be displayed later than the prior
+				// message if finding suggestions takes long because pircbotx is async
+				else if (log) {
 					Main.write(event.getUser().getLogin() + ": " + msg);
 				}
 			}
 		}
+	}
+	
+	private static Iterator<String> startcmd = null;
+	
+	private static String startNext() {
+		if (startcmd != null && startcmd.hasNext())
+			return startcmd.next();
+		return null;
 	}
 
 	private static final String SERVER = "irc.chat.twitch.tv";
@@ -120,6 +121,7 @@ public class Chat {
 	protected static void create(String name, String auth, String defch) throws Exception {
 		Chat.name = name;
 		Chat.defch = defch;
+		startcmd = ConfigFile.getLines("startup.txt").iterator();
 
 		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
 				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)

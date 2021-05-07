@@ -1,5 +1,6 @@
 package tv.twitch.hwsnemo.autoreply.cmd;
 
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
 import tv.twitch.hwsnemo.autoreply.Main;
 
 public class ConsoleCmdInfo extends CmdInfo {
@@ -8,7 +9,7 @@ public class ConsoleCmdInfo extends CmdInfo {
 	}
 
 	@Override
-	public boolean chkPut(CmdLevel lvl, String maincmd, String... ailas) {
+	public boolean chkPut(ChatLevel lvl, String maincmd, String... ailas) {
 		boolean right = maincmd.equalsIgnoreCase(getCmd());
 		if (!right) {
 			for (String c : ailas) {

@@ -1,10 +1,10 @@
 package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
 import tv.twitch.hwsnemo.autoreply.Main;
 import tv.twitch.hwsnemo.autoreply.MainConfig;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 import tv.twitch.hwsnemo.autoreply.osu.SendableException;
 import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
@@ -49,7 +49,7 @@ public class NpCmd implements Cmd {
 
 	@Override
 	public boolean go(CmdInfo inf) {
-		if (inf.chkPut(CmdLevel.NORMAL, "!np", "!nowplaying", "!map", "!song")) {
+		if (inf.chkPut(ChatLevel.NORMAL, "!np", "!nowplaying", "!map", "!song")) {
 			try {
 				np = NowPlaying.get();
 			} catch (SendableException e) {
@@ -64,7 +64,7 @@ public class NpCmd implements Cmd {
 
 			inf.send(format(np));
 			return true;
-		} else if (inf.chkPut(CmdLevel.NORMAL, "!bloodcat")) {
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!bloodcat")) {
 			if (np != null) {
 				String path = setorid(np);
 				if (path != null)

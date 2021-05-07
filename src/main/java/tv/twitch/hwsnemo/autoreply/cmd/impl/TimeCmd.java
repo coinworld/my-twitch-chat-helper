@@ -2,9 +2,9 @@ package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import java.util.Calendar;
 
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
-import tv.twitch.hwsnemo.autoreply.cmd.CmdLevel;
 
 public class TimeCmd implements Cmd {
 
@@ -13,7 +13,7 @@ public class TimeCmd implements Cmd {
 
 	@Override
 	public boolean go(CmdInfo inf) {
-		if (inf.chkPut(CmdLevel.MOD, "!setcountdown")) {
+		if (inf.chkPut(ChatLevel.MOD, "!setcountdown")) {
 			if (inf.getArg() != null) {
 				String[] time = inf.getArg().split(":", 2);
 				int hr = Integer.parseInt(time[0]);
@@ -36,7 +36,7 @@ public class TimeCmd implements Cmd {
 			} else {
 				inf.send("Specify time.");
 			}
-		} else if (inf.chkPut(CmdLevel.NORMAL, "!cd", "!countdown")) {
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!cd", "!countdown")) {
 			if (timeset) {
 				long diff = eventtime - System.currentTimeMillis();
 

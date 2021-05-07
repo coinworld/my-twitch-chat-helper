@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
 
 public class ChatCmdInfo extends CmdInfo {
 	private final MessageEvent event;
@@ -16,7 +17,7 @@ public class ChatCmdInfo extends CmdInfo {
 	}
 
 	@Override
-	public boolean chkPut(CmdLevel lvl, String maincmd, String... ailas) {
+	public boolean chkPut(ChatLevel lvl, String maincmd, String... ailas) {
 		return checkPut(getCmd(), event, lvl, maincmd, ailas);
 	}
 	
@@ -27,7 +28,7 @@ public class ChatCmdInfo extends CmdInfo {
 	
 	private static final Map<String, Long> lastcmd = new ConcurrentHashMap<>();
 
-	private static boolean checkPut(String input, MessageEvent event, CmdLevel lvl, String maincmd, String... cmd) {
+	private static boolean checkPut(String input, MessageEvent event, ChatLevel lvl, String maincmd, String... cmd) {
 		boolean right = maincmd.equalsIgnoreCase(input);
 		if (!right) {
 			for (String c : cmd) {
@@ -38,7 +39,7 @@ public class ChatCmdInfo extends CmdInfo {
 			}
 		}
 
-		if (right && (!isUsedRecently(maincmd) || CmdLevel.MOD.check(event)) && lvl.check(event)) {
+		if (right && (!isUsedRecently(maincmd) || ChatLevel.MOD.check(event)) && lvl.check(event)) {
 			lastcmd.put(maincmd, System.currentTimeMillis());
 			return true;
 		}

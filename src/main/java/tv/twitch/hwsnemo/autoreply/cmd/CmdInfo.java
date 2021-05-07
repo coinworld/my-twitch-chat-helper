@@ -1,5 +1,7 @@
 package tv.twitch.hwsnemo.autoreply.cmd;
 
+import tv.twitch.hwsnemo.autoreply.ChatLevel;
+
 public abstract class CmdInfo {
 
 	private final String cmd;
@@ -13,7 +15,7 @@ public abstract class CmdInfo {
 			this.arg = null;
 	}
 
-	public abstract boolean chkPut(CmdLevel lvl, String maincmd, String... ailas);
+	public abstract boolean chkPut(ChatLevel lvl, String maincmd, String... ailas);
 
 	public String getCmd() {
 		return cmd;

@@ -3,7 +3,7 @@ A Twitch chat helper that has some useful features including osu! multiplayer tr
 
 ---
 
-You need to make `config.txt` in a directory where the program is located to make full use of this bot.
+You need to make `config.txt` and `startup.txt` in a directory where the program is located to make full use of this bot.
 
 ### config.txt
 
@@ -16,9 +16,6 @@ defch #<channel to join>
 osuapi <your osu api key>
 cmdcooldown <duration in milliseconds, 1 sec = 1000>
 enablechatlog <yn>
-
-cmdlisttype <blacklist|whitelist|no_list>
-cmdlist <score,time,misc,debug,np> # ... Commands / <this thing>
 ```
 
 Additional entries you can add:
@@ -31,16 +28,9 @@ scoreformat <format>
 setscoreformat <format>
 autoscorechat <yn>
 
-overlaytype <text|window|disabled>
-overlayscoreformat <format>
-overlaysetscoreformat <format>
-
-font <font name>
-fontsize <font size>
-backcolor <color>
-labelcolor <color>
-width <numbers>
-height <numbers>
+textscore <yn>
+textscoreformat <format>
+textsetscoreformat <format>
 ```
 
 You can get **oauth** here: https://twitchapps.com/tmi/ (for chat)
@@ -58,17 +48,20 @@ Default values (If you don't set these values, values below are used so you don'
 - `npformat`: `{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}` and you can also use `{beatmapid}` and `{setid}`
 - `scoreformat`: `{ourname} | {ourscore} - {oppscore} | {oppname}`
 - `setscoreformat`: `{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}`
-- `overlaytype`: `disabled`
-- `overlayscoreformat`: `{ourscore} - {oppscore}` (you can use name too)
-- `overlaysetscoreformat`: `({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})` (same as above)
-- `font`: `Serif`
-- `fontsize`: 30
-- `backcolor`: `white`
-- `labelcolor`: `black`
-- `width`: 300
-- `height`: 100
+- `textscoreformat`: `{ourscore} - {oppscore}` (you can use name too)
+- `textsetscoreformat`: `({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})` (same as above)
 
-You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magenta, orange, pink, red and white` for color.
+### startup.txt
+
+This file defines command to be launched at startup. You will have no commands (except for manage ones) or suggestions if you don't have this file set up.
+
+```
+!managecmd enable np
+!managecmd enable time
+!managecmd enable match
+
+!managesugg enable linkdetect
+```
 
 ---
 
@@ -77,42 +70,32 @@ You can use `black, blue, cyan, darkgray, gray, green, yellow, lightgray, magent
 only !np bot:
 
 ```
+> config.txt
 oauth oauth:1234567abcdefg
 twitchname npbot
 defch #channel
 osuapi notused
 
 enablechatlog no
-cmdlisttype whitelist
-cmdlist np
+
+> startup.txt
+!managecmd enable np
 ```
 
 Score and time commands with text overlay:
 
 ```
+> config.txt
 oauth oauth:1234567abcdefgh
 twitchname matchbot
 defch #channel
 osuapi 1234567890qwertyuiop
 
-enablechatlog no
-cmdlisttype whitelist
-cmdlist match,time
+textscore yes
 
-overlaytype text
-```
-
-Disable only !roll command:
-
-```
-oauth oauth:1234567abcdefghj
-twitchname bot
-defch #channel
-osuapi 1234567890qwertyuiop
-
-enablechatlog no
-cmdlisttype blacklist
-cmdlist misc
+> startup.txt
+!managecmd enable match
+!managecmd enable time
 ```
 
 ---
@@ -224,6 +207,14 @@ Displays a bloodcat link of previous `!np` result.
 
 `!debug`:
 **[MODS]** Not really used currently. It is used when something wrong happened and I need to check in the chat.
+
+### Manage commands / `manage`
+
+`!managecmd <enable/disable> <command group name>`:
+**[MODS]** Enable or disable command without restarting bot.
+
+`!managesugg <enable/disable/toggleinstant> <suggest name>`:
+**[MODS]** Enable or disable suggestions or toggle instant action without restarting bot.
 
 ---
 
