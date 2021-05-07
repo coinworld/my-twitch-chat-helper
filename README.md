@@ -111,8 +111,6 @@ There are some basic commands you can use right away. You can try to add some ne
 
 The bot will open the overlay window automatically if `overlaytype` is set as `window`. The window will close if you type `!over`.
 
-You can add the overlay window to OBS and if you have set `backcolor` as `black`, you should add a **Color Key** filter, set **Key Color Type** as **Custom Color** and set it as black.
-
 You can also use `text` option if you don't want to deal with every option that `window` has. This option will create `score.txt` in a directory where the program is in.
 
 To use this in OBS, add **Text** in OBS, check **Read from file** in its properties and choose the file in the Text File 'Browse' dialog.
