@@ -191,6 +191,11 @@ public class MatchCmd implements Cmd {
 			}
 			
 			if (act == Action.START) {
+				if (ongoing) {
+					inf.send("The match isn't over yet. Type !over before you start a new match.");
+					return true;
+				}
+				
 				if (inf.getArg() != null) {
 					String[] args = inf.getArg().split(" ");
 
