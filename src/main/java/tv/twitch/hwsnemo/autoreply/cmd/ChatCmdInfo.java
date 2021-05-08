@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import tv.twitch.hwsnemo.autoreply.Chat;
 import tv.twitch.hwsnemo.autoreply.ChatLevel;
+import tv.twitch.hwsnemo.autoreply.MainConfig;
 
 public class ChatCmdInfo extends CmdInfo {
 	private final MessageEvent event;
@@ -46,11 +47,7 @@ public class ChatCmdInfo extends CmdInfo {
 		return false;
 	}
 
-	private static long cooldown = 3000L;
-
-	public static void setCooldown(long time) {
-		cooldown = time;
-	}
+	private static long cooldown = MainConfig.getLong("cmdcooldown", 3000);
 
 	private static boolean isUsedRecently(String cmd) {
 		if (lastcmd.containsKey(cmd)) {

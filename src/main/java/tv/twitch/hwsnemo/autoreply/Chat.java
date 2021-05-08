@@ -34,9 +34,7 @@ public class Chat {
 
 			// Main.revert();
 			// do not let System.out.println be used
-
-			ChatCmdInfo.setCooldown(MainConfig.getLong("cmdcooldown", 3000));
-
+			
 			Main.write("Connected. Ctrl+C to exit.");
 			PircBotX bot = event.getBot();
 
