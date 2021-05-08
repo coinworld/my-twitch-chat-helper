@@ -10,7 +10,7 @@ import tv.twitch.hwsnemo.autoreply.osu.gosu.NowPlaying;
 
 public class NpCmd implements Cmd {
 
-	private static String format = getFormat(MainConfig.getString("npformat",
+	private String format = getFormat(MainConfig.getString("npformat",
 			"{artist} - {song} [{difficulty}] +{mods} (by {mapper} | {sr}* | {bpm}) {url}"));
 
 	private static String getFormat(String form) {
@@ -20,7 +20,7 @@ public class NpCmd implements Cmd {
 				.replace("{url}", "%10$s");
 	}
 
-	private static String format(NowPlaying np) {
+	private static String format(NowPlaying np, String format) {
 		String bpm;
 		if (np.getMinBPM() == np.getMaxBPM()) {
 			bpm = np.getMinBPM() + "bpm";
@@ -45,10 +45,16 @@ public class NpCmd implements Cmd {
 		return null;
 	}
 	
-	private NowPlaying np = null;
+	private volatile NowPlaying np = null;
+	
+	// %1$d : set id | %2$d : beatmap id
+	private static final String CHIMU = "https://api.chimu.moe/v1/download/%1$d?n=1";
+	private static final String NERINA = "https://nerina.pw/d/%1$d";
+	private static final String SAYOBOT = "https://osu.sayobot.cn/osu.php?s=%1$d";
 
 	@Override
 	public boolean go(CmdInfo inf) {
+		String mirroraddr = null;
 		if (inf.chkPut(ChatLevel.NORMAL, "!np", "!nowplaying", "!map", "!song")) {
 			try {
 				np = NowPlaying.get();
@@ -62,14 +68,22 @@ public class NpCmd implements Cmd {
 				return true;
 			}
 
-			inf.send(format(np));
+			inf.send(format(np, format));
 			return true;
-		} else if (inf.chkPut(ChatLevel.NORMAL, "!bloodcat")) {
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!bloodcat", "!chimu")) {
+			mirroraddr = CHIMU;
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!nerina")) {
+			mirroraddr = NERINA;
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!sayobot")) {
+			mirroraddr = SAYOBOT;
+		}
+		if (mirroraddr != null) {
 			if (np != null) {
-				String path = setorid(np);
-				if (path != null)
-					inf.send("https://bloodcat.com/osu/" + path);
+				inf.send(String.format(mirroraddr, np.getSet(), np.getId()));
+			} else {
+				inf.send("You need to use !np in prior to use this command.");
 			}
+			return true;
 		}
 		return false;
 	}

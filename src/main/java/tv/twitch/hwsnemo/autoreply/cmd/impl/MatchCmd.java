@@ -19,17 +19,17 @@ import tv.twitch.hwsnemo.autoreply.osu.result.TeamVS;
 
 public class MatchCmd implements Cmd {
 
-	private static boolean autoscorechat = MainConfig.isYes("autoscorechat");
+	private boolean overlay = MainConfig.isYes("textscore");
 
-	private static boolean overlay = MainConfig.isYes("textscore");
-
-	private static interface AutoRun<T extends Result> {
+	private interface AutoRun<T extends Result> {
 		void go(T result);
 	}
 
-	private static class AutoThread<T extends Result> extends Thread {
+	private class AutoThread<T extends Result> extends Thread {
 		private AutoThread(AutoRun<T> run, Class<T> clazz, MatchCmd mc) {
 			super(() -> {
+				boolean autoscorechat = MainConfig.isYes("autoscorechat");
+				
 				try {
 					while (mc.ongoing) {
 						List<Result> res = mc.m.getNow();
@@ -40,7 +40,7 @@ public class MatchCmd implements Cmd {
 								if (clazz.isInstance(r))
 									run.go(clazz.cast(r));
 							}
-							if (MatchCmd.autoscorechat)
+							if (autoscorechat)
 								Chat.send("Auto: " + mc.getScore());
 							mc.updateOverlay();
 						}
@@ -98,10 +98,10 @@ public class MatchCmd implements Cmd {
 		fw = null;
 	}
 
-	private static String setformat = getScoreFormat(MainConfig.getString("setscoreformat",
+	private String setformat = getScoreFormat(MainConfig.getString("setscoreformat",
 			"{ourname} ({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore}) {oppname}"));
 
-	private static String scoreformat = getScoreFormat(
+	private String scoreformat = getScoreFormat(
 			MainConfig.getString("scoreformat", "{ourname} | {ourscore} - {oppscore} | {oppname}"));
 
 	private String getScore() {
@@ -111,10 +111,10 @@ public class MatchCmd implements Cmd {
 		return String.format(scoreformat, ourname, ourscore, oppscore, oppname, desc);
 	}
 
-	private static String overlaysetformat = getScoreFormat(MainConfig.getString("textsetscoreformat",
+	private String overlaysetformat = getScoreFormat(MainConfig.getString("textsetscoreformat",
 			"({oursetscore}) | {ourscore} - {oppscore} | ({oppsetscore})"));
 
-	private static String overlayscoreformat = getScoreFormat(
+	private String overlayscoreformat = getScoreFormat(
 			MainConfig.getString("textscoreformat", "{ourscore} - {oppscore}"));
 
 	private String getOverlayScore() {

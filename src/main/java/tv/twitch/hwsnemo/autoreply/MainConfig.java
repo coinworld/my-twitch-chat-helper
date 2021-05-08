@@ -24,6 +24,10 @@ public class MainConfig {
 		}
 		return config;
 	}
+	
+	public static void set(String key, String value) {
+		config.put(key, value);
+	}
 
 	public static boolean isYes(String key) {
 		return !config.containsKey(key) || config.get(key).equalsIgnoreCase("yes");

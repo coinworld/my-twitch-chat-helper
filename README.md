@@ -196,8 +196,8 @@ Displays countdown.
 `!np` / `!nowplaying` / `!map` / `!song`:
 Displays the current song if gosumemory is available.
 
-`!bloodcat`:
-Displays a bloodcat link of previous `!np` result.
+`!chimu (!bloodcat) / !nerina / !sayobot`:
+Displays a corresponding mirror link of previous `!np` result.
 
 ### Debug commands / `debug`
 
@@ -211,6 +211,9 @@ Displays a bloodcat link of previous `!np` result.
 
 `!managesugg <enable/disable/toggleinstant> <suggest name>`:
 **[MODS]** Enable or disable suggestions or toggle instant action without restarting bot.
+
+`!chconf <key> <value>`:
+**[MODS]** Changes a config.txt entry temporarily. Entries changed with this command won't survive re-launch. Most commands don't support changing config through this command so you will need to re-**enable** the command to see the effect.
 
 ---
 

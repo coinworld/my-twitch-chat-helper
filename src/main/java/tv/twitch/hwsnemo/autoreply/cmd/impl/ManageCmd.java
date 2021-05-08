@@ -1,6 +1,7 @@
 package tv.twitch.hwsnemo.autoreply.cmd.impl;
 
 import tv.twitch.hwsnemo.autoreply.ChatLevel;
+import tv.twitch.hwsnemo.autoreply.MainConfig;
 import tv.twitch.hwsnemo.autoreply.base.BaseMap;
 import tv.twitch.hwsnemo.autoreply.cmd.Cmd;
 import tv.twitch.hwsnemo.autoreply.cmd.CmdInfo;
@@ -17,7 +18,17 @@ public class ManageCmd implements Cmd {
 			map = CmdMap.getMap();
 		} else if (inf.chkPut(ChatLevel.MOD, "!managesugg")) {
 			map = SuggestMap.getMap();
+		} else if (inf.chkPut(ChatLevel.MOD, "!chconf")) {
+			String[] arg = inf.getArg().split(" ", 2);
+			if (arg.length != 2) {
+				inf.send("Invaild argument.");
+				return true;
+			}
+			
+			MainConfig.set(arg[0], arg[1]);
+			inf.send("Config is temporarily updated.");
 		}
+		
 		if (map != null) {
 			String[] arg = inf.getArg().split(" ", 2);
 			if (arg.length != 2) {
@@ -34,7 +45,7 @@ public class ManageCmd implements Cmd {
 				} else if (arg[0].equalsIgnoreCase("toggleinstant")) {
 					if (map instanceof SuggestMap) {
 						((SuggestMap) map).setInstant(arg[1], !((SuggestMap) map).getInstant(arg[1]));
-						inf.send("Now any messages that " + arg[1] + " detects will get an appropriate action immediately.");
+						inf.send("Instant action state of " + arg[1] + "is now toggled.");
 					} else {
 						inf.send("This action is only available on suggest management.");
 					}
