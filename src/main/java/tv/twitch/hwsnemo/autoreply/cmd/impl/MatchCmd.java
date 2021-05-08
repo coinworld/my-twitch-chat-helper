@@ -128,11 +128,69 @@ public class MatchCmd implements Cmd {
 		return format.replace("{ourname}", "%1$s").replace("{ourscore}", "%2$d").replace("{oppscore}", "%3$d")
 				.replace("{oppname}", "%4$s").replace("{info}", "%5$s").replace("{oursetscore}", "%6$d").replace("{oppsetscore}", "%7$d");
 	}
+	
+	private static enum Action {
+		START, OVER, RESET, MP, SETINFO, SCORE, SETNAME, WIN, LOSE;
+	}
 
 	@Override
 	public boolean go(CmdInfo inf) {
+		boolean checkOngoing = false;
+		boolean updateTextScore = false;
+		Action act = null;
+		
 		if (inf.chkPut(ChatLevel.MOD, "!start")) {
-			if (!ongoing) {
+			checkOngoing = false;
+			updateTextScore = true;
+			act = Action.START;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!setinfo")) {
+			checkOngoing = false;
+			updateTextScore = true;
+			act = Action.SETINFO;
+			
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!score")) {
+			checkOngoing = true;
+			updateTextScore = false;
+			act = Action.SCORE;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!win")) {
+			checkOngoing = true;
+			updateTextScore = true;
+			act = Action.WIN;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!lose")) {
+			checkOngoing = true;
+			updateTextScore = true;
+			act = Action.LOSE;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!over")) {
+			checkOngoing = false;
+			updateTextScore = true;
+			act = Action.OVER;
+			
+		} else if (inf.chkPut(ChatLevel.NORMAL, "!mp")) {
+			checkOngoing = true;
+			updateTextScore = false;
+			act = Action.MP;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!reset")) {
+			checkOngoing = true;
+			updateTextScore = true;
+			act = Action.RESET;
+			
+		} else if (inf.chkPut(ChatLevel.MOD, "!setname")) {
+			checkOngoing = false;
+			updateTextScore = true;
+			act = Action.SETNAME;
+		}
+		
+		if (act != null) {
+			if (checkOngoing && !ongoing) {
+				return true;
+			}
+			
+			if (act == Action.START) {
 				if (inf.getArg() != null) {
 					String[] args = inf.getArg().split(" ");
 
@@ -244,95 +302,73 @@ public class MatchCmd implements Cmd {
 				if (ongoing && overlay) {
 					fw = new TextFileWrite("score.txt");
 				}
-			} else {
-				inf.send("Match is not over yet.");
-			}
-		} else if (inf.chkPut(ChatLevel.MOD, "!setinfo")) {
-			if (inf.getArg() == null)
-				return true;
+				
+			} else if (act == Action.SETINFO) {
+				if (inf.getArg() == null)
+					return true;
 
-			desc = inf.getArg();
-			inf.send("Info is now set.");
-		} else if (inf.chkPut(ChatLevel.NORMAL, "!score")) {
-			if (!ongoing)
-				return true;
-
-			inf.send(getScore());
-		} else if (inf.chkPut(ChatLevel.MOD, "!win")) {
-			if (!ongoing)
-				return true;
-
-			int n = 1;
-			if (inf.getArg() != null) {
-				String sc = inf.getArg().toLowerCase();
-				if (sc.startsWith("set:")) {
-					n = Integer.parseInt(sc.substring(4));
-					winSet(n);
-					n = -1;
-				} else {
-					n = Integer.parseInt(sc);
+				desc = inf.getArg();
+				inf.send("Info is now set.");
+				
+			} else if (act == Action.SCORE) {
+				inf.send(getScore());
+				
+			} else if (act == Action.WIN || act == Action.LOSE) {
+				int n = 1;
+				if (inf.getArg() != null) {
+					String sc = inf.getArg().toLowerCase();
+					if (sc.startsWith("set:")) {
+						n = Integer.parseInt(sc.substring(4));
+						if (act == Action.WIN) winSet(n);
+						else loseSet(n);
+						n = -1;
+					} else {
+						n = Integer.parseInt(sc);
+					}
 				}
-			}
-			for (int i = 0; i < n; i++) {
-				win();
-			}
-			inf.send(getScore());
-		} else if (inf.chkPut(ChatLevel.MOD, "!lose")) {
-			if (!ongoing)
-				return true;
-
-			int n = 1;
-			if (inf.getArg() != null) {
-				String sc = inf.getArg().toLowerCase();
-				if (sc.startsWith("set:")) {
-					n = Integer.parseInt(sc.substring(4));
-					loseSet(n);
-					n = -1;
-				} else {
-					n = Integer.parseInt(sc);
+				for (int i = 0; i < n; i++) {
+					if (act == Action.WIN) win();
+					else lose();
 				}
-			}
-			for (int i = 0; i < n; i++) {
-				lose();
-			}
-			inf.send(getScore());
-		} else if (inf.chkPut(ChatLevel.MOD, "!over")) {
-			reset();
-			inf.send("Now that every information is gone, you can start again.");
-		} else if (inf.chkPut(ChatLevel.NORMAL, "!mp")) {
-			if (!ongoing)
-				return true;
+				inf.send(getScore());
+				
+			} else if (act == Action.OVER) {
+				reset();
+				inf.send("Now that every information is gone, you can start again.");
+				
+			} else if (act == Action.MP) {
+				if (m != null) {
+					inf.send("https://osu.ppy.sh/mp/" + m.getMP());
+				}
+				
+			} else if (act == Action.RESET) {
+				if (inf.getArg() != null && inf.getArg().equalsIgnoreCase("all")) {
+					resetScore(true);
+				}
 
-			if (m != null) {
-				inf.send("https://osu.ppy.sh/mp/" + m.getMP());
-			}
-		} else if (inf.chkPut(ChatLevel.MOD, "!reset")) {
-			if (!ongoing)
-				return true;
+				resetScore();
+				inf.send(getScore());
+			} else if (act == Action.SETNAME) {
+				if (inf.getArg() == null) {
+					return true;
+				}
+				String[] t = inf.getArg().split(",");
+				if (t.length != 2) {
+					inf.send("Wrong Name");
+					return true;
+				}
 
-			if (inf.getArg() != null && inf.getArg().equalsIgnoreCase("all")) {
-				resetScore(true);
-			}
+				setName(t[0].replace('*', ' '), t[1].replace('*', ' '));
 
-			resetScore();
-			inf.send(getScore());
-		} else if (inf.chkPut(ChatLevel.MOD, "!setname")) {
-			if (inf.getArg() == null) {
-				return true;
+				inf.send("Team names are set.");
 			}
-			String[] t = inf.getArg().split(",");
-			if (t.length != 2) {
-				inf.send("Wrong Name");
-				return true;
+			
+			if (updateTextScore) {
+				updateOverlay();
 			}
-
-			setName(t[0].replace('*', ' '), t[1].replace('*', ' '));
-
-			inf.send("Team names are set.");
 		} else {
 			return false;
 		}
-		updateOverlay();
 		return true;
 	}
 

@@ -31,7 +31,7 @@ public class LinkDetector implements Suggest {
 
 		@Override
 		public void run() {
-			Chat.send("/timeout " + name + " 60");
+			Chat.send("/timeout " + name + " 5");
 			Chat.send(name + " -> The streamer doesn't take any request at this moment.");
 		}
 
@@ -39,6 +39,9 @@ public class LinkDetector implements Suggest {
 
 	@Override
 	public SuggestAction hit(SuggestInfo inf) {
+		if (inf.isVIP()) {
+			return null;
+		}
 		String[] parts = inf.getMsg().split(" ");
 		for (String part : parts) {
 			try {
