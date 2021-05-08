@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tv.twitch.hwsnemo</groupId>
 	<artifactId>AutoReply</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.15</version>
 
 	<build>
 		<plugins>
@@ -34,17 +34,17 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.11.2</version>
+			<version>2.12.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jline</groupId>
 			<artifactId>jline</artifactId>
-			<version>3.16.0</version>
+			<version>3.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fusesource.jansi</groupId>
 			<artifactId>jansi</artifactId>
-			<version>1.18</version>
+			<version>2.1.0</version>
 		</dependency>
 	</dependencies>
 </project>
