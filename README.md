@@ -40,8 +40,6 @@ for **osu! api**: https://osu.ppy.sh/p/api/ (for match tracking / Tracking calls
 Every `<yn>` entries are either `yes` or anything else and not having them set just enables them (Basically `oauth`, `twichname`, `defch` are the only necessary entries. osu! api key is not needed if you are not using features like match tracking).
 Keys (oauth, defch, ...) of the config are not case sensitive so you can use `ChatPrefix` or so on to improve readability.
 
-Font~Height Options are only used when `overlaytype` is set as `window`.
-
 Default values (If you don't set these values, values below are used so you don't have to set every value manually):
 - `chatprefix`: (no prefix)
 - `cmdcooldown`: 3000
