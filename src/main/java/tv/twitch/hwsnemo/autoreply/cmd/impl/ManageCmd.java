@@ -34,6 +34,7 @@ public class ManageCmd implements Cmd {
 				} else if (arg[0].equalsIgnoreCase("toggleinstant")) {
 					if (map instanceof SuggestMap) {
 						((SuggestMap) map).setInstant(arg[1], !((SuggestMap) map).getInstant(arg[1]));
+						inf.send("Now any messages that " + arg[1] + " detects will get an appropriate action immediately.");
 					} else {
 						inf.send("This action is only available on suggest management.");
 					}
