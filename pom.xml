@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tv.twitch.hwsnemo</groupId>
 	<artifactId>AutoReply</artifactId>
-	<version>0.15</version>
+	<version>0.16</version>
 
 	<build>
 		<plugins>
