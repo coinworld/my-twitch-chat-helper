@@ -27,10 +27,10 @@ public class ManageCmd implements Cmd {
 			try {
 				if (arg[0].equalsIgnoreCase("enable")) {
 					map.enable(arg[1]);
-					inf.send(arg[1] + "is now sucessfully enabled.");
+					inf.send(arg[1] + " is now sucessfully enabled.");
 				} else if (arg[0].equalsIgnoreCase("disable")) {
 					map.disable(arg[1]);
-					inf.send(arg[1] + "is now sucessfully disabled.");
+					inf.send(arg[1] + " is now sucessfully disabled.");
 				} else if (arg[0].equalsIgnoreCase("toggleinstant")) {
 					if (map instanceof SuggestMap) {
 						((SuggestMap) map).setInstant(arg[1], !((SuggestMap) map).getInstant(arg[1]));

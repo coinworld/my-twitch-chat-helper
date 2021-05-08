@@ -121,7 +121,7 @@ public class Chat {
 	protected static void create(String name, String auth, String defch) throws Exception {
 		Chat.name = name;
 		Chat.defch = defch;
-		startcmd = ConfigFile.getLines("startup.txt").iterator();
+		startcmd = ConfigFile.getLines(MainConfig.getString("startupcmd", "startup.txt")).iterator();
 
 		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
 				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)
