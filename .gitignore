@@ -27,3 +27,9 @@ target/
 
 /bin/
 bin/
+
+.classpath
+.project
+
+/.settings/
+.settings/
