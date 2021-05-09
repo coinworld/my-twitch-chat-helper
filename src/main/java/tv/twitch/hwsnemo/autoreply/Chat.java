@@ -135,8 +135,12 @@ public class Chat {
 		startcmd = ConfigFile.getLines(MainConfig.getString("startupcmd", "startup.txt")).iterator();
 
 		bot = new PircBotX(new Configuration.Builder().addServer(SERVER, PORT)
-				.setSocketFactory(SSLSocketFactory.getDefault()).setName(name).setServerPassword(auth)
-				.addAutoJoinChannel(defch).addListener(new Listener()).setAutoReconnect(true).buildConfiguration());
+				.setSocketFactory(SSLSocketFactory.getDefault())
+				.setName(name).setServerPassword(auth)
+				.addAutoJoinChannel(defch).addListener(new Listener())
+				.setAutoReconnect(true).setAutoReconnectAttempts(100)
+				.setSocketTimeout(15000)
+				.buildConfiguration());
 	}
 
 	public static PircBotX getBot() {
