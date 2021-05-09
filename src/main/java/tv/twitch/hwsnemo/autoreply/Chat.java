@@ -109,7 +109,7 @@ public class Chat {
 		public void onDisconnect(DisconnectEvent event) throws Exception {
 			Main.writeWarn("DISCONNECTED: " + event.getDisconnectException().getMessage());
 			Main.writeWarn("Will try to reconnect...");
-		}
+		} // this seems to only happen when it's disconnected gracefully. pircbotx will usually handle connection lost so this won't be used much i guess.
 	}
 
 	private static Iterator<String> startcmd = null;
@@ -139,7 +139,7 @@ public class Chat {
 				.setName(name).setServerPassword(auth)
 				.addAutoJoinChannel(defch).addListener(new Listener())
 				.setAutoReconnect(true).setAutoReconnectAttempts(100)
-				.setSocketTimeout(15000)
+				.setSocketTimeout(3000).setSocketConnectTimeout(15000)
 				.buildConfiguration());
 	}
 
