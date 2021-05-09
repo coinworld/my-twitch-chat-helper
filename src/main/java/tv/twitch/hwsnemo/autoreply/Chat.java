@@ -44,7 +44,8 @@ public class Chat {
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/membership");
 			bot.sendRaw().rawLineNow("CAP REQ :twitch.tv/tags twitch.tv/commands");
 			
-			if (!disconnected) {
+			if (!connected) {
+				connected = true;
 				while (true) {
 					String c = startNext();
 					try {
@@ -102,13 +103,12 @@ public class Chat {
 			}
 		}
 
-		private boolean disconnected = false;
+		private boolean connected = false;
 
 		@Override
 		public void onDisconnect(DisconnectEvent event) throws Exception {
 			Main.writeWarn("DISCONNECTED: " + event.getDisconnectException().getMessage());
 			Main.writeWarn("Will try to reconnect...");
-			disconnected = true;
 		}
 	}
 
